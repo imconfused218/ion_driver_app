@@ -1,3 +1,7 @@
+
+
+
+
 // Ionic Starter App
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
@@ -17,3 +21,23 @@ angular.module('starter', ['ionic'])
     }
   });
 })
+
+.controller('assignmentsListController', function(){
+  this.test = 'hello World';
+
+  this.assignments = [
+    {dropOff: "8:15pm"}
+  ]
+})
+
+.config(function($stateProvider, $urlRouterProvider){
+  $stateProvider
+    .state('assignmentsList', {
+      url: '/',
+      controller: 'assignmentsListController as assignmentsCtrl',
+      templateUrl: 'assignmentsList.html'
+    });
+
+  $urlRouterProvider.otherwise('/')
+})
+
