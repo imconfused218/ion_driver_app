@@ -26,16 +26,63 @@
     <ion-nav-view></ion-nav-view>
 
     <script id='assignmentsList.html' type='text/ng-template'>
-      <ion-view view-title='Assignments'>
-        <ion-header-bar class="bar-stable">
-        <h1 class="title driverAppTitle">All Assignments</h1>
-      </ion-header-bar>
+      <ion-side-menus>
+        <ion-side-menu side='left'>
+          <ion-header-bar class='bar-stable'>
+            <h1 class='title'>Shift Options</h1>
+          </ion-header-bar>
+          <ion-content>
+            <ul class='workGroups'>
+              <li class='item item-button-right' ng-repeat='cluster in assignmentsCtrl.agentService.clusters'>
+                {{cluster.name}}
+                  <button ng-click='assignmentsCtrl.toggleDuty(cluster)' class='button button-positive'>Go</button>
+              </li>
+            </ul>
+          </ion-content>
+        </ion-side-menu>
+        <ion-side-menu-content>
+          <ion-view view-title='Assignments'>
+            <ion-header-bar>
+              <ion-nav-bar class="bar-stable">
+                <ion-nav-buttons side='left'>
+                  <button class='button button-icon button-clear ion-navicon' ng-click='assignmentsCtrl.toggleSideMenu()'></button>
+                  <h1 class="title driverAppTitle">All Assignments</h1>
+                </ion-nav-buttons>
+              </ion-nav-bar>
+            </ion-header-bar>
+            <ion-content>
+              <ion-list>
+                <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments'>
+                {{assignment.dropoff}}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ion-view>
+        </ion-side-menu-content>
+      </ion-side-menus>
+    </script>
+
+    <script id='logIn.html' type='text/ng-template'>
+      <ion-view view-title='Log In'>
+        <ion-header-bar class='bar-stable'>
+          <h1 class='title logInTitle'>Log In</h1>
+        </ion-header-bar>
         <ion-content>
-          <ion-list>
-            <ion-item ng-repeat='assignment in assignmentsCtrl.assignments'>
-            {{assignment.dropOff}}
-            </ion-item>
-          </ion-list>
+          <div class='logInHeader'>Sterling Driver App</div>
+          <div class='logInSubHeader'> Please log In!</div>
+          <form>
+            <label class='item item-input'>
+              <span class='input-label'>Email</span>
+              <input ng-model='logInCtrl.logInField.email' type='email'>
+            </label>
+            <label class='item item-input'>
+              <span class='input-label'>Password</span>
+              <input ng-model='logInCtrl.logInField.password' type='password'>
+            </label>
+            <div class='logInBtnContainer'>
+              <button class='button button-block button-dark logInBtn' ng-click='logInCtrl.logIn()'>Log In</button>
+            </div>
+          </form>
         </ion-content>
       </ion-view>
     </script>
