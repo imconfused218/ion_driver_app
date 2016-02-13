@@ -34,3 +34,16 @@
 .logInBtnContainer {
 	padding: 5px 25px;
 }
+
+
+/********************OnDuty Side menu ********************/
+
+
+.offDuty {
+	background-color: hsla(352, 62%, 71%, 1);
+}
+
+.onDuty {
+	background-color: hsla(135, 70%, 72%, 1);
+}
+

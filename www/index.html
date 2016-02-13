@@ -25,7 +25,7 @@
 
     <ion-nav-view></ion-nav-view>
 
-    <script id='assignmentsList.html' type='text/ng-template'>
+    <script id="assignmentsList.html" type="text/ng-template">
       <ion-side-menus>
         <ion-side-menu side='left'>
           <ion-header-bar class='bar-stable'>
@@ -33,14 +33,14 @@
           </ion-header-bar>
           <ion-content>
             <ul class='workGroups'>
-              <li class='item item-button-right' ng-repeat='cluster in assignmentsCtrl.agentService.clusters'>
+              <li class='offDuty item item-button-right' ng-class="{ 'onDuty': cluster.on_duty }" ng-repeat='cluster in assignmentsCtrl.agentService.clusters'>
                 {{cluster.name}}
                   <button ng-click='assignmentsCtrl.toggleDuty(cluster)' class='button button-positive'>Go</button>
               </li>
             </ul>
           </ion-content>
         </ion-side-menu>
-        <ion-side-menu-content>
+        <ion-side-menu-content >
           <ion-view view-title='Assignments'>
             <ion-header-bar>
               <ion-nav-bar class="bar-stable">
@@ -50,10 +50,25 @@
                 </ion-nav-buttons>
               </ion-nav-bar>
             </ion-header-bar>
-            <ion-content>
+            <ion-content ng-show='!assignmentsCtrl.selectedAssignment'>
               <ion-list>
-                <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments'>
-                {{assignment.dropoff}}
+                <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)'>
+                  <div><span class='ion-pizza'></span>  {{assignment.dropoff}} Drop OFF</div>
+                  <div>{{assignment.tasks.length}} - Tasks {{assignment.tasks[0].place}}</div>
+                </ion-item>
+              </ion-list>
+            </ion-content>
+            <ion-content ng-show='assignmentsCtrl.isSelected()'>
+              <ion-list>
+                <ion-item ng-repeat='task in assignmentsCtrl.selectedAssignment.tasks'>
+                  <div>{{task.pickup}}</div>
+                  <div>{{task.place}}</div>
+                  <div>{{task.address}}</div>
+                </ion-item>
+                <ion-item>
+                  <div>{{assignmentsCtrl.selectedAssignment.dropoff}}</div>
+                  <div>{{assignmentsCtrl.selectedAssignment.destination}}</div>
+                  <div>{{assignmentsCtrl.selectedAssignment.destination_address}}</div>
                 </ion-item>
               </ion-list>
             </ion-content>
@@ -62,7 +77,7 @@
       </ion-side-menus>
     </script>
 
-    <script id='logIn.html' type='text/ng-template'>
+    <script id="logIn.html" type="text/ng-template">
       <ion-view view-title='Log In'>
         <ion-header-bar class='bar-stable'>
           <h1 class='title logInTitle'>Log In</h1>
@@ -87,47 +102,12 @@
       </ion-view>
     </script>
 
-    <!--<ion-pane>
-      
-      <ion-content>
-        <ul class='workGroups'>
-          <li class='item item-toggle'>
-            Marriot City Center
-            <label class='toggle toggle-balanced'>
-              <input type='checkbox'>
-              <div class='track'>
-                <div class='handle'></div>
-              </div>
-            </label>
-          </li>
-          <li class='item item-toggle'>
-            EA Redwood City
-            <label class='toggle toggle-balanced'>
-              <input type='checkbox'>
-              <div class='track'>
-                <div class='handle'></div>
-              </div>
-            </label>
-          </li>
-          <li class='item item-toggle'>
-            Inactive Places
-            <label class='toggle toggle-balanced'>
-              <input type='checkbox'>
-              <div class='track'>
-                <div class='handle'></div>
-              </div>
-            </label>
-          </li>
-        </ul>
-        <div>
-          <label class='toggle toggle-balanced'>
-            <input type='checkbox'>
-            <div class='track'>
-              <div class='handle'></div>
-            </div>
-          </label>
-        </div>
-      </ion-content>
-    </ion-pane> -->
+    <script id='activeAssignment.html' type='text/ng-template'>
+      <ion-view view-title='Active Assignment'>
+      <ion-header-bar class='bar-stable'>
+        <h1 class='title currentAssignment'>Current Assignment</h1>
+      </ion-header-bar>
+      <ion-content></ion-content>
+    </script>
   </body>
 </html>

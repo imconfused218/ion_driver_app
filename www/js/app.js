@@ -23,6 +23,7 @@ angular.module('starter', ['ionic'])
 })
 
 .controller('assignmentsListController', AssignmentsCtrl)
+.controller('activeCtrl', ActiveCtrl)
 .controller('logInCtrl', LogInCtrl)
 .service('agentService', AgentService)
 
@@ -46,7 +47,12 @@ angular.module('starter', ['ionic'])
       url: '/logIn',
       controller: 'logInCtrl as logInCtrl',
       templateUrl: 'logIn.html'
-    });
+    })
+    .state('activeAssignment',{
+      url: '/activeAssignment',
+      controller: 'activeCtrl as activeCtrl',
+      templateUrl: 'activeAssignment.html'
+    })
 
   $urlRouterProvider.otherwise('/logIn');
 
@@ -54,9 +60,10 @@ angular.module('starter', ['ionic'])
 
 
 //Service for logging in, getting assignments, updating, etc.
-function AgentService ($http, $q) {
+function AgentService ($http, $q, $location) {
   this.$q = $q;
   this.$http = $http;
+  this.$location = $location;
   this.hostUrl = 'https://sandbox.menu.me/'
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
@@ -128,14 +135,18 @@ AgentService.prototype.postStatus = function (cluster) {
   })
 };
 
-//Controller for the assignmentList views
+AgentService.prototype.checkForActive = function () {
+  if(this.assignments[0].active){
+    this.$location.path('')
+  }
+};
+
+////////////////////////////////Controller for the assignmentList views///////////////////////
 function AssignmentsCtrl (agentService, $ionicSideMenuDelegate) {
   this.$ionicSideMenuDelegate = $ionicSideMenuDelegate;
   this.agentService = agentService;
 
-  this.assignments = [
-    {dropOff: "8:15pm"}
-  ];
+  this.selectedAssignment;
 }
 
 AssignmentsCtrl.prototype.toggleSideMenu = function () {
@@ -149,8 +160,28 @@ AssignmentsCtrl.prototype.toggleDuty = function (cluster) {
   this.toggleSideMenu();
 };
 
+AssignmentsCtrl.prototype.selectAssignment = function(assignment){
+  console.log('assignment', assignment);
+  this.selectedAssignment = assignment;
+  console.log('this.selectedAssignment', this.selectedAssignment);
+};
 
-//Controller for the logInView
+AssignmentsCtrl.prototype.isSelected = function () {
+  console.log(this.selectedAssignment ? true :false);
+  return this.selectedAssignment ? true :false;
+};
+
+
+////////////////////////////////Controller for active Assignment///////////////////////////
+
+function ActiveCtrl (agentService){
+  this.agentService = agentService;
+
+  activeAssignment = this.agentService.assignments[0];
+}
+
+
+////////////////////////////////////Controller for the logInView///////////////////////////
 function LogInCtrl (agentService, $location) {
   this.$location = $location;
   this.agentService = agentService;
