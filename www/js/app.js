@@ -7,7 +7,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'activeCtrl'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -23,7 +23,6 @@ angular.module('starter', ['ionic'])
 })
 
 .controller('assignmentsListController', AssignmentsCtrl)
-.controller('activeCtrl', ActiveCtrl)
 .controller('logInCtrl', LogInCtrl)
 .service('agentService', AgentService)
 
@@ -74,6 +73,8 @@ function AgentService ($http, $q, $location) {
 
   this.assignments = [];
 
+  this.activeAssignment;
+
   this.configObj = {
     headers: {
       "Authorization": this.auth,
@@ -103,6 +104,7 @@ AgentService.prototype.getAssignments = function () {
   return this.$http.get(this.rootUrl + 'tasks/', this.configObj).then(function(results){
     console.log('assignments Results', results);
     self.assignments = results.data.assignments;
+    self.checkForActive();
     return results;
   }, function(err){
     console.log('err at assignmentsService', err);
@@ -127,6 +129,8 @@ AgentService.prototype.postStatus = function (cluster) {
 
   var on_duty = cluster.on_duty == 1 ? 0 : 1;
 
+  cluster.on_duty = on_duty;
+
   var emptyData = {};
 
   return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
@@ -137,13 +141,15 @@ AgentService.prototype.postStatus = function (cluster) {
 
 AgentService.prototype.checkForActive = function () {
   if(this.assignments[0].active){
-    this.$location.path('')
+    this.activeAssignment = this.assignments[0];
+    this.$location.path('/activeAssignment');
   }
 };
 
 ////////////////////////////////Controller for the assignmentList views///////////////////////
-function AssignmentsCtrl (agentService, $ionicSideMenuDelegate) {
+function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $location) {
   this.$ionicSideMenuDelegate = $ionicSideMenuDelegate;
+  this.$location = $location;
   this.agentService = agentService;
 
   this.selectedAssignment;
@@ -160,9 +166,12 @@ AssignmentsCtrl.prototype.toggleDuty = function (cluster) {
   this.toggleSideMenu();
 };
 
-AssignmentsCtrl.prototype.selectAssignment = function(assignment){
-  console.log('assignment', assignment);
-  this.selectedAssignment = assignment;
+AssignmentsCtrl.prototype.toggleSelectAssignment = function(assignment){
+  if(assignment == this.selectedAssignment){
+    this.selectedAssignment = undefined;
+  } else {
+    this.selectedAssignment = assignment;
+  }
   console.log('this.selectedAssignment', this.selectedAssignment);
 };
 
@@ -171,14 +180,12 @@ AssignmentsCtrl.prototype.isSelected = function () {
   return this.selectedAssignment ? true :false;
 };
 
+AssignmentsCtrl.prototype.acceptAssignment = function () {
+  this.$location.path('/activeAssignment')
+};
+
 
 ////////////////////////////////Controller for active Assignment///////////////////////////
-
-function ActiveCtrl (agentService){
-  this.agentService = agentService;
-
-  activeAssignment = this.agentService.assignments[0];
-}
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////
