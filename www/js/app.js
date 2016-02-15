@@ -7,7 +7,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic', 'activeCtrl'])
+angular.module('starter', ['ionic', 'activeCtrl', 'agentService'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -24,7 +24,6 @@ angular.module('starter', ['ionic', 'activeCtrl'])
 
 .controller('assignmentsListController', AssignmentsCtrl)
 .controller('logInCtrl', LogInCtrl)
-.service('agentService', AgentService)
 
 //routing for different views in driverApp
 .config(function($stateProvider, $urlRouterProvider, $httpProvider){
@@ -58,93 +57,7 @@ angular.module('starter', ['ionic', 'activeCtrl'])
 })
 
 
-//Service for logging in, getting assignments, updating, etc.
-function AgentService ($http, $q, $location) {
-  this.$q = $q;
-  this.$http = $http;
-  this.$location = $location;
-  this.hostUrl = 'https://sandbox.menu.me/'
-  this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
-  
-  this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
 
-
-  this.clusters = [];
-
-  this.assignments = [];
-
-  this.activeAssignment;
-
-  this.configObj = {
-    headers: {
-      "Authorization": this.auth,
-      "Content-Type": 'text/plain'}
-  }
-
-}
-
-AgentService.prototype.logIn = function (logInInfo) {
-  var self= this;
-  var logInUrl = 'api/1/auth/';
-
-  return this.$http.post(this.hostUrl + logInUrl, logInInfo, this.configObj).then(function(results){
-    console.log('logIn Results', results);
-    self.configObj.headers['Bearer'] = results.data.auth_token;
-    return results;
-  },function(err){
-    console.log('err at logInService', err);
-    return self.$q.reject(err);
-  });
-
-};
-
-AgentService.prototype.getAssignments = function () {
-  var self = this;
-
-  return this.$http.get(this.rootUrl + 'tasks/', this.configObj).then(function(results){
-    console.log('assignments Results', results);
-    self.assignments = results.data.assignments;
-    self.checkForActive();
-    return results;
-  }, function(err){
-    console.log('err at assignmentsService', err);
-    return self.$q.reject(err);
-  });
-};
-
-AgentService.prototype.getStatus = function () {
-  var self = this;
-
-  return this.$http.get(this.rootUrl + 'status/', this.configObj).then(function(results){
-    console.log('get status results', results);
-    self.clusters = results.data.groups;
-    return results;
-  });
-};
-
-AgentService.prototype.postStatus = function (cluster) {
-  var self = this;
-
-  var groupId = cluster.id;
-
-  var on_duty = cluster.on_duty == 1 ? 0 : 1;
-
-  cluster.on_duty = on_duty;
-
-  var emptyData = {};
-
-  return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
-    console.log('post status results', results);
-    return self.getAssignments();
-  })
-};
-
-AgentService.prototype.checkForActive = function () {
-  if(this.assignments[0].active){
-    this.activeAssignment = this.assignments[0];
-    this.$location.path('/activeAssignment');
-  }
-};
 
 ////////////////////////////////Controller for the assignmentList views///////////////////////
 function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $location) {
@@ -160,9 +73,7 @@ AssignmentsCtrl.prototype.toggleSideMenu = function () {
 };
 
 AssignmentsCtrl.prototype.toggleDuty = function (cluster) {
-  this.agentService.postStatus(cluster).then(function(results){
-    console.log('results from toggleDuty', results);
-  });
+  this.agentService.postStatus(cluster);
   this.toggleSideMenu();
 };
 
@@ -176,16 +87,18 @@ AssignmentsCtrl.prototype.toggleSelectAssignment = function(assignment){
 };
 
 AssignmentsCtrl.prototype.isSelected = function () {
-  console.log(this.selectedAssignment ? true :false);
   return this.selectedAssignment ? true :false;
 };
 
 AssignmentsCtrl.prototype.acceptAssignment = function () {
-  this.$location.path('/activeAssignment')
+  var self = this;
+  var assignmentId = this.selectedAssignment.id;
+
+  this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
+    self.agentService.getAssignments();
+    self.$location.path('/activeAssignment')
+  })
 };
-
-
-////////////////////////////////Controller for active Assignment///////////////////////////
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////

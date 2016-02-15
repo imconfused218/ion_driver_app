@@ -21,6 +21,7 @@
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <script src='js/activeCtrl.js'></script>
+    <script src='js/agentService.js'></script>
   </head>
   <body ng-app="starter">
 
@@ -136,6 +137,9 @@
             <div>{{activeCtrl.agentService.activeAssignment.destination_address}}</div>
           </ion-item>
         </ion-list>
+        <div class='buttonContainer'>
+          <button class='button button-block button-dark' ng-click='activeCtrl.arriveAssignment()'>Arriving Now</button>
+        </div>
       </ion-content>
     </script>
   </body>
