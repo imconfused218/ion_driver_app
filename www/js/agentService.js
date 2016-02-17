@@ -75,6 +75,9 @@ AgentService.prototype.getStatus = function () {
   return this.$http.get(this.rootUrl + 'status/', this.configObj).then(function(results){
     console.log('get status results', results);
     self.clusters = results.data.groups;
+    if(self.checkForOnDuty()){
+      self.startIntervalCheck();
+    }
     return results;
   });
 };
@@ -161,9 +164,18 @@ AgentService.prototype.assignmentAction = function (assignmentId, action) {
 	var emptyObj = {};
 
 	return this.$http.post(this.rootUrl + 'assignments/' + action + assignmentId + '/', emptyObj, this.configObj).then(function(results){
-		console.log('accept assignment', results);
+		console.log('assignment action', results);
 		return results;
-	})
+	});
+};
+
+AgentService.prototype.taskComplete = function (taskId) {
+  var emptyObj = {};
+
+  return this.$http.post(this.rootUrl + 'tasks/complete/' + taskId + '/', emptyObj, this.configObj).then(function(result){
+    console.log('task complete', results);
+    return results;
+  });
 };
 
 

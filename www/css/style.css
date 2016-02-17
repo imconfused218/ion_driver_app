@@ -47,3 +47,26 @@
 	background-color: hsla(135, 70%, 72%, 1);
 }
 
+
+
+/************************Selected Order View*****************/
+
+.orderInfoContainer {
+	display: flex;
+	justify-content: left;
+}
+
+.entryContainer {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+}
+
+.entryContainer div {
+	padding: 1em;
+}
+
+.entryIcon img{
+	max-width: 75px;
+	max-height: 75px;
+}

@@ -96,6 +96,7 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
 
   this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
     self.agentService.getAssignments();
+    this.selectedAssignment = undefined;
     self.$location.path('/activeAssignment')
   })
 };

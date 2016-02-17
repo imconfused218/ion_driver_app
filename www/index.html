@@ -111,9 +111,11 @@
     <script id='activeAssignment.html' type='text/ng-template'>
       <ion-view view-title='Active Assignment'>
       <ion-header-bar class='bar-stable'>
-        <h1 class='title currentAssignment'>Current Assignment</h1>
+        <button ng-show='activeCtrl.orderSelected()' class='button button-icon button-clear button-dark ion-chevron-left' ng-click='activeCtrl.deSelectOrder()'>Back</button>
+        <h1 ng-show='activeCtrl.orderSelected()' class='title currentOrder'> Order {{activeCtrl.selectedOrder.id}}</h1>
+        <h1 ng-show='!activeCtrl.orderSelected()' class='title currentAssignment'>Current Assignment</h1>
       </ion-header-bar>
-      <ion-content>
+      <ion-content ng-show='!activeCtrl.orderSelected()'>
         <ion-list>
           <ion-item>
             <div>{{activeCtrl.agentService.activeAssignment.dropoff}}</div>
@@ -125,7 +127,7 @@
               <div>{{task.place}}</div>
               <div>{{task.address}}</div>
             </ion-item>
-            <ion-item ng-repeat='order in task.orders'>
+            <ion-item ng-repeat='order in task.orders' ng-click='activeCtrl.selectOrder(order)'>
               <div>Order Number:{{order.id}}</div>
               <div>{{order.name}}</div>
               <div>{{order.details}}</div>
@@ -138,7 +140,26 @@
           </ion-item>
         </ion-list>
         <div class='buttonContainer'>
-          <button class='button button-block button-dark' ng-click='activeCtrl.arriveAssignment()'>Arriving Now</button>
+           <button ng-show='activeCtrl.assignmentReadyToFinish' class='button button-block button-dark' ng-click='activeCtrl.completeAssignment()'>Complete Assignment</button> 
+          <button ng-show='activeCtrl.allOrdersBeGot && !activeCtrl.assignmentReadyToFinish' class='button button-block button-dark' ng-click='activeCtrl.arriveAssignment()'>Arriving Now</button>
+        </div>
+      </ion-content>
+      <ion-content ng-show='activeCtrl.orderSelected()'>
+      <div class='orderInfoContainer'>
+        <div>Order for {{activeCtrl.selectedOrder.name}}</div>
+        <div>{{activeCtrl.selectedOrder.details}}</div>
+         - <div>{{activeCtrl.selectedOrder.item_count}} Item(s)</div>
+        <div class='ion-phone'></div>
+      </div>
+      <ion-list>
+        <ion-item ng-repeat='entry in activeCtrl.selectedOrder.entries' class='entryContainer'>
+          <div class='entryIcon'><img ng-src='{{entry.icon}}'></div>
+          <div>{{entry.name}}</div>
+           x <div>{{entry.quant}}</div>
+        </ion-item>
+      </ion-list>
+      <div class='buttonContainer' ng-show='!activeCtrl.selectedOrder.isGot'>
+          <button class='button button-block button-calm' ng-click='activeCtrl.orderBeGot()'>Got it!</button>
         </div>
       </ion-content>
     </script>
