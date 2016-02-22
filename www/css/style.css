@@ -2,6 +2,7 @@
 
 .bar .driverAppTitle {
 	font-weight: bold;
+	text-align: center;
 }
 
 .jobArea {
@@ -15,6 +16,7 @@
 .bar .logInTitle {
 	font-size: 24px;
 	font-weight: bold;
+	text-align: center;
 }
 
 .logInHeader {
@@ -48,18 +50,103 @@
 }
 
 
+/**********************Assignment List View**************/
+
+.title.driverAppTitle {
+	font-size: 20px;
+}
+
+.assignmentRow {
+	display: flex;
+	justify-content: space-between;
+	align-itmes: center;
+}
+
+.assignmentRowInfo {
+	font-size: 18px;
+	padding: 3px;
+}
+
+.assignmentRowInfo .dropOff {
+	font-weight: bold;
+	padding-bottom: 4px;
+}
+
+.chevronButton {
+	padding-top: 10px;
+	padding-right: 20px;
+}
+
+.chevronButton i.ion-chevron-right {
+	padding-top: 20px;
+	font-size: 28px;
+}
+
+
+/*************************Current Assignment View***********/
+
+.currentAssignment {
+	font-weight: bold;
+}
+
+.currentAssignmentSubheader {
+	display: flex;
+	justify-content: space-between;
+}
+
+
+.currentDropOffTime {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.currentDestination{
+
+
+}
+
+.orderRow{
+	display: flex;
+	justify-content: space-between;
+}
+
+.orderRow .orderNumber{
+	font-style: italic;
+}
+
+.orderRow .orderName {
+	font-size: 24px;
+  font-weight: bold;
+}
+
+.orderRow .orderRoom {
+	font-weight: bold;
+}
+
+.orderRow .chevronButton {
+	padding-top: 0px;
+}
+
 
 /************************Selected Order View*****************/
+
 
 .orderInfoContainer {
 	display: flex;
 	justify-content: left;
+	font-size: 18px;
+	padding: 0.75em;
+}
+
+.orderInfoContainer div {
+	padding-left: 10px;
 }
 
 .entryContainer {
 	display: flex;
 	justify-content: left;
 	align-items: center;
+	padding: 0px;
 }
 
 .entryContainer div {
@@ -70,3 +157,10 @@
 	max-width: 75px;
 	max-height: 75px;
 }
+
+.entryName {
+	font-size: 22px;
+}
+
+
+
