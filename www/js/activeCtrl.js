@@ -15,6 +15,7 @@ angular.module('activeCtrl', ['ionic', 'agentService'])
 
 .controller('activeCtrl', ActiveCtrl);
 
+//Controller for a user's current assignment
 function ActiveCtrl (agentService, $location) {
 	this.agentService = agentService;
 	this.$location = $location;
@@ -24,11 +25,14 @@ function ActiveCtrl (agentService, $location) {
 	this.assignmentReadyToFinish = false;
 }
 
+//Sends this back to the server when all orders for a task have been picked up
 ActiveCtrl.prototype.taskComplete = function (taskId) {
 	var emptyObj = {};
 	this.agentService.taskComplete(taskId);
 };
 
+
+//For sending a text message to the guest that the driver has arrived
 ActiveCtrl.prototype.arriveAssignment = function () {
 	var emptyObj = {};
 	var self = this;
@@ -38,6 +42,8 @@ ActiveCtrl.prototype.arriveAssignment = function () {
 	});
 };
 
+
+//Closes out the assignment and sends the user back to the assignmentList view
 ActiveCtrl.prototype.completeAssignment = function () {
 	var self = this;
 	var emptyObj = {};
@@ -47,10 +53,12 @@ ActiveCtrl.prototype.completeAssignment = function () {
 		self.allOrdersBeGot = false;
 		self.assignmentReadyToFinish = false;
 		self.agentService.activeAssignment = undefined;
-		self.$location.path('/');
+		self.$location.path('/list');
 	})
 };
 
+
+//selectOrder, deSelectOrder, and orderSelected are for changing the view to see order details
 ActiveCtrl.prototype.selectOrder = function (order) {
 	this.selectedOrder = order;
 	console.log('this.selectedOrder', this.selectedOrder);
@@ -64,12 +72,15 @@ ActiveCtrl.prototype.orderSelected = function () {
 	return this.selectedOrder ? true : false;
 };
 
+//When a user gets an order it marks it as picked up and checks to see if that's all the orders
 ActiveCtrl.prototype.orderBeGot = function () {
 	this.selectedOrder['isGot'] = true;
 	this.selectedOrder = undefined;
 	this.checkOrdersBeGot();
 };
 
+
+//Checks to see if all the orders at a restaurant have been taken, if so calls completeTask()
 ActiveCtrl.prototype.checkOrdersBeGot = function () {
 	var currentAssignment = this.agentService.activeAssignment;
 
