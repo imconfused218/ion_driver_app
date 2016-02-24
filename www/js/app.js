@@ -1,12 +1,6 @@
 
 
-
-
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
+//Main module that everything is based off of
 angular.module('starter', ['ionic', 'activeCtrl', 'agentService'])
 
 .run(function($ionicPlatform, $location) {
@@ -52,12 +46,8 @@ angular.module('starter', ['ionic', 'activeCtrl', 'agentService'])
       controller: 'activeCtrl as activeCtrl',
       templateUrl: 'activeAssignment.html'
     })
-
   $urlRouterProvider.otherwise('/logIn');
-
 })
-
-
 
 
 ////////////////////////////////Controller for the assignmentList views///////////////////////
@@ -68,7 +58,6 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $location) {
 
   this.selectedAssignment;
 }
-
 
 //Shows or hides side menu
 AssignmentsCtrl.prototype.toggleSideMenu = function () {
@@ -88,7 +77,6 @@ AssignmentsCtrl.prototype.toggleSelectAssignment = function(assignment){
   } else {
     this.selectedAssignment = assignment;
   }
-  console.log('this.selectedAssignment', this.selectedAssignment);
 };
 
 AssignmentsCtrl.prototype.isSelected = function () {

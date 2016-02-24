@@ -1,3 +1,6 @@
+
+
+
 angular.module('agentService',['ionic'])
 	.service('agentService', AgentService);
 
@@ -8,7 +11,7 @@ function AgentService ($http, $q, $location, $interval, $window) {
   this.$location = $location;
   this.$interval = $interval;
   this.$window = $window;
-  this.hostUrl = 'https://sandbox.menu.me/'
+  this.hostUrl = 'https://sandbox.menu.me/';
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
@@ -27,7 +30,7 @@ function AgentService ($http, $q, $location, $interval, $window) {
     headers: {
       "Authorization": this.auth,
       "Content-Type": 'text/plain'}
-  }
+  };
 
   this.currentLocation;
 
@@ -189,10 +192,14 @@ AgentService.prototype.assignmentAction = function (assignmentId, action) {
 //Posts to server when all orders for a task have been "got"
 AgentService.prototype.taskComplete = function (taskId) {
   var emptyObj = {};
+  var self = this;
 
-  return this.$http.post(this.rootUrl + 'tasks/complete/' + taskId + '/', emptyObj, this.configObj).then(function(result){
+  return this.$http.post(this.rootUrl + 'tasks/complete/' + taskId + '/', emptyObj, this.configObj).then(function(results){
     console.log('task complete', results);
     return results;
+  },function(err){
+    console.log('err at taskComplete', err);
+    return self.$q.reject(err);
   });
 };
 

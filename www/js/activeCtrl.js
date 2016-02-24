@@ -31,7 +31,6 @@ ActiveCtrl.prototype.taskComplete = function (taskId) {
 	this.agentService.taskComplete(taskId);
 };
 
-
 //For sending a text message to the guest that the driver has arrived
 ActiveCtrl.prototype.arriveAssignment = function () {
 	var emptyObj = {};
@@ -41,7 +40,6 @@ ActiveCtrl.prototype.arriveAssignment = function () {
 		self.assignmentReadyToFinish = true;
 	});
 };
-
 
 //Closes out the assignment and sends the user back to the assignmentList view
 ActiveCtrl.prototype.completeAssignment = function () {
@@ -57,11 +55,9 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	})
 };
 
-
 //selectOrder, deSelectOrder, and orderSelected are for changing the view to see order details
 ActiveCtrl.prototype.selectOrder = function (order) {
 	this.selectedOrder = order;
-	console.log('this.selectedOrder', this.selectedOrder);
 };
 
 ActiveCtrl.prototype.deSelectOrder = function() {
@@ -78,7 +74,6 @@ ActiveCtrl.prototype.orderBeGot = function () {
 	this.selectedOrder = undefined;
 	this.checkOrdersBeGot();
 };
-
 
 //Checks to see if all the orders at a restaurant have been taken, if so calls completeTask()
 ActiveCtrl.prototype.checkOrdersBeGot = function () {

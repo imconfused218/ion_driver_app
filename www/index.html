@@ -58,7 +58,7 @@
                 <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.toggleSelectAssignment(assignment)' class='assignmentRow'>
                   <div class='assignmentRowInfo'>
                     <div class='dropOff'><span class='ion-pizza'></span>  {{assignment.dropoff}} Drop OFF</div>
-                    <div>{{assignment.tasks.length}} - Tasks {{assignment.tasks[0].place}}</div>
+                    <div>{{assignment.tasks.length}} Task(s) - {{assignment.tasks[0].place}}</div>
                   </div>
                   <div class='chevronButton'>
                     <i class='icon ion-chevron-right'></i>
