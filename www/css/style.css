@@ -1,3 +1,6 @@
+.title {
+	text-align: center;
+}
 
 
 .bar .driverAppTitle {
@@ -77,9 +80,14 @@
 	padding-right: 20px;
 }
 
+.chevronButton .destination {
+	display: inline;
+	font-style: italic;
+}
+
 .chevronButton i.ion-chevron-right {
-	padding-top: 20px;
 	font-size: 28px;
+	padding-left: 1em;
 }
 
 

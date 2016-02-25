@@ -61,6 +61,9 @@
                     <div>{{assignment.tasks.length}} Task(s) - {{assignment.tasks[0].place}}</div>
                   </div>
                   <div class='chevronButton'>
+                    <div class='destination'>
+                      {{assignment.destination}}
+                    </div>
                     <i class='icon ion-chevron-right'></i>
                   </div>
                 </ion-item>
@@ -68,6 +71,10 @@
             </ion-content>
             <ion-content ng-show='assignmentsCtrl.isSelected()'>
               <ion-list>
+                <ion-item class='currentAssignmentSubheader'>
+                  <div class='currentDropOffTime'>{{assignmentsCtrl.selectedAssignment.dropoff}} DROPOFF</div>
+                  <div class='currentDestination'>{{assignmentsCtrl.selectedAssignment.destination}}</div>
+                </ion-item>
                 <ion-item ng-repeat='task in assignmentsCtrl.selectedAssignment.tasks'>
                   <div>{{task.pickup}}</div>
                   <div>{{task.place}}</div>
@@ -78,10 +85,12 @@
                   <div>{{assignmentsCtrl.selectedAssignment.destination}}</div>
                   <div>{{assignmentsCtrl.selectedAssignment.destination_address}}</div>
                 </ion-item>
+                <ion-item >
+                  <div class='buttonContainer button button-block button-dark icon-right ion-chevron-left'>Swipe left to Accept
+                    <ion-option-button class='button-positive icon ion-android-happy' ng-click='assignmentsCtrl.acceptAssignment()'></ion-option-button>
+                  </div>
+                </ion-item>
               </ion-list>
-              <div class='buttonContainer'>
-                <button class='button button-block button-dark acceptAssignmentBtn' ng-click='assignmentsCtrl.acceptAssignment()'>Accept Assignment</button>
-              </div>
             </ion-content>
           </ion-view>
         </ion-side-menu-content>

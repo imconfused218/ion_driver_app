@@ -5,12 +5,13 @@ angular.module('agentService',['ionic'])
 	.service('agentService', AgentService);
 
 //Service for logging in, getting assignments, updating, etc.
-function AgentService ($http, $q, $location, $interval, $window) {
+function AgentService ($http, $q, $location, $interval, $window, $ionicLoading) {
   this.$q = $q;
   this.$http = $http;
   this.$location = $location;
   this.$interval = $interval;
   this.$window = $window;
+  this.$ionicLoading = $ionicLoading;
   this.hostUrl = 'https://sandbox.menu.me/';
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
@@ -34,6 +35,14 @@ function AgentService ($http, $q, $location, $interval, $window) {
 
   this.currentLocation;
 
+  this.ionicLoadingConfig = {
+    content: 'Loading',
+    animation: 'fade-in',
+    showBackdrop: true,
+    maxWidith: 200,
+    showDelay: 0
+  };
+
 }
 
 //Passes user email and password to server
@@ -41,10 +50,13 @@ AgentService.prototype.logIn = function (logInInfo) {
   var self= this;
   var logInUrl = 'api/1/auth/';
 
+  this.$ionicLoading.show(this.ionicLoadingConfig);
+
   return this.$http.post(this.hostUrl + logInUrl, logInInfo, this.configObj).then(function(results){
     console.log('logIn Results', results);
     self.configObj.headers['Bearer'] = results.data.auth_token;
     self.$window.localStorage['configObj'] = JSON.stringify(self.configObj);
+    self.$ionicLoading.hide();
     return results;
   },function(err){
     console.log('err at logInService', err);
@@ -183,8 +195,10 @@ AgentService.prototype.stopIntervalCheck = function () {
 AgentService.prototype.assignmentAction = function (assignmentId, action) {
 	var emptyObj = {};
 
+  this.$ionicLoading.show(this.ionicLoadingConfig);
 	return this.$http.post(this.rootUrl + 'assignments/' + action + assignmentId + '/', emptyObj, this.configObj).then(function(results){
-		console.log('assignment action', results);
+		self.$ionicLoading.hide();
+    console.log('assignment action', results);
 		return results;
 	});
 };
