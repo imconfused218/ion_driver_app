@@ -121,8 +121,10 @@ AgentService.prototype.postStatus = function (cluster) {
 
 //Checks to see if user currently has an active assignment
 AgentService.prototype.checkForActive = function () {
+  console.log('checkForACtive', this.assignments);
 	if(angular.isDefined(this.assignments[0])){
 	  if(this.assignments[0].active){
+      console.log('assignmentsfromcheck', this.assignments[0])
 	    this.activeAssignment = this.assignments[0];
 	    this.$location.path('/activeAssignment');
 	  }
@@ -193,6 +195,7 @@ AgentService.prototype.stopIntervalCheck = function () {
 
 //General function for making a change to an assignment, ex. "Got it", "arriving", "complete"
 AgentService.prototype.assignmentAction = function (assignmentId, action) {
+  var self = this;
 	var emptyObj = {};
 
   this.$ionicLoading.show(this.ionicLoadingConfig);

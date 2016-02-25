@@ -1,10 +1,18 @@
 
 
 //Main module that everything is based off of
-angular.module('starter', ['ionic', 'activeCtrl', 'agentService'])
+angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentService'])
 
 .run(function($ionicPlatform, $location) {
   $ionicPlatform.ready(function() {
+
+    var push = new Ionic.Push({
+      "debug": true
+    });
+
+    push.register(function(token){
+      console.log('Device token', token.token);
+    });
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -101,10 +109,8 @@ function LogInCtrl (agentService, $location, $window) {
   this.$location = $location;
   this.agentService = agentService;
 
-
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj']){
-    console.log('$localStorage', $window.localStorage);
     this.$location.path('/list');
   }
 

@@ -14,9 +14,11 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
+<script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
 
     <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
+    <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
+<!-- <script src="cordova.js"></script> -->
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
@@ -172,9 +174,14 @@
       </div>
       <ion-list>
         <ion-item ng-repeat='entry in activeCtrl.selectedOrder.entries' class='entryContainer'>
-          <div class='entryIcon'><img ng-src='{{entry.icon}}'></div>
-          <div class='entryName'>{{entry.name}}</div>
-           x <div>{{entry.quant}}</div>
+          <div class='orderDetailsContainer'>
+            <div class='entryIcon'><img ng-src='{{entry.icon}}'></div>
+            <div class='entryName'>{{entry.name}}</div>
+             x <div>{{entry.quant}}</div>
+          </div>
+          <div>
+            <ion-checkbox></ion-checkbox>
+          </div>
         </ion-item>
       </ion-list>
       <div class='buttonContainer' ng-show='!activeCtrl.selectedOrder.isGot'>
