@@ -139,23 +139,23 @@
           </ion-item>
           <div ng-repeat='task in activeCtrl.agentService.activeAssignment.tasks'>
             <ion-item>
-              <div>{{task.pickup}}</div>
+              <div class='taskPickup'>{{task.pickup}}</div>
               <div>{{task.place}}</div>
               <div>{{task.address}}</div>
             </ion-item>
             <ion-item class='orderRow' ng-repeat='order in task.orders' ng-click='activeCtrl.selectOrder(order)'>
-              <div>
-                <div class='orderNumber'>Order Number: {{order.id}}</div>
-              </div>
+                <div class='orderDetails'>
                   <div class='orderName'>{{order.name}}</div>
                   <div class='orderRoom'>Room: {{order.details}}</div>
+                  <div class='orderNumber'>Order Number: {{order.id}}</div>
+                </div>
               <div class='chevronButton'>
                 <i class='ionic ion-chevron-right'></i>
               </div>
             </ion-item>
           </div>
           <ion-item>
-            <div>{{activeCtrl.agentService.activeAssignment.dropoff}}</div>
+            <div class='activeAssignmentDropoff'>{{activeCtrl.agentService.activeAssignment.dropoff}}</div>
             <div>{{activeCtrl.agentService.activeAssignment.destination}}</div>
             <div>{{activeCtrl.agentService.activeAssignment.destination_address}}</div>
           </ion-item>
@@ -173,15 +173,13 @@
         <div class='ion-phone'></div>
       </div>
       <ion-list>
-        <ion-item ng-repeat='entry in activeCtrl.selectedOrder.entries' class='entryContainer'>
-          <div class='orderDetailsContainer'>
-            <div class='entryIcon'><img ng-src='{{entry.icon}}'></div>
-            <div class='entryName'>{{entry.name}}</div>
-             x <div>{{entry.quant}}</div>
-          </div>
-          <div>
-            <ion-checkbox></ion-checkbox>
-          </div>
+        <ion-item ng-repeat='entry in activeCtrl.selectedOrder.entries' class='entryRow' ng-click='activeCtrl.entryToggleCheck(entry)' ng-class='{checked: entry.checked}'>
+            <div class='entryContainer'>
+              <div class='entryIcon'><img ng-src='{{entry.icon}}'></div>
+              <div class='entryName'>{{entry.name}}</div>
+               x <div>{{entry.quant}}</div>
+            </div>
+            <ion-checkbox ng-model='entry.checked' class='checkbox' ng-class='{checked: entry.checked}'></ion-checkbox>
         </ion-item>
       </ion-list>
       <div class='buttonContainer' ng-show='!activeCtrl.selectedOrder.isGot'>

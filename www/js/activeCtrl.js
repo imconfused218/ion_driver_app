@@ -94,3 +94,8 @@ ActiveCtrl.prototype.checkOrdersBeGot = function () {
 	}
 	this.allOrdersBeGot = true;
 };
+
+ActiveCtrl.prototype.entryToggleCheck = function (entry) {
+	console.log('entry', entry);
+	entry.checked = !entry.checked;
+};

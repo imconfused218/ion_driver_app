@@ -15,6 +15,11 @@
 	padding:10px 0px;
 }
 
+.buttonContainer button{
+	width: 85%;
+	margin: auto;
+}
+
 /*--------------------Log In View--------------*/
 
 .bar .logInTitle {
@@ -114,9 +119,27 @@
 
 }
 
+.taskPickup {
+	font-weight: bold;
+}
+
+.activeAssignmentDropoff {
+	font-weight: bold;
+}
+
 .orderRow{
 	display: flex;
 	justify-content: space-between;
+}
+
+.orderDetails {
+	display: flex;
+	justify-content: left;
+	font-size: 16px;
+}
+
+.orderDetails div{
+	padding-left: 1em;
 }
 
 .orderRow .orderNumber{
@@ -124,8 +147,8 @@
 }
 
 .orderRow .orderName {
-	font-size: 24px;
   font-weight: bold;
+  font-size: 20px;
 }
 
 .orderRow .orderRoom {
@@ -151,6 +174,11 @@
 	padding-left: 10px;
 }
 
+.entryRow {
+	display: flex;
+	justify-content: space-between;
+}
+
 .entryContainer {
 	display: flex;
 	justify-content: left;
@@ -171,5 +199,12 @@
 	font-size: 22px;
 }
 
+.checkbox {
+	border: none;
+	padding-right: 2em;
+}
 
+.checked {
+	background-color: lightgreen;
+}
 
