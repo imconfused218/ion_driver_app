@@ -202,9 +202,12 @@
 .checkbox {
 	border: none;
 	padding-right: 2em;
+	pointer-events: none;
 }
+
 
 .checked {
 	background-color: lightgreen;
 }
+
 
