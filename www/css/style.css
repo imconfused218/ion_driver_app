@@ -1,23 +1,12 @@
-.title {
-	text-align: center;
-	margin: auto auto;
+
+.contentContainer {
+	background-color: #F7F7F7;
 }
 
-
-.bar .driverAppTitle {
-	font-weight: bold;
-	text-align: center;
-}
-
-.jobArea {
-	font-size: 20px;
-	border-bottom:1px dashed #888;
-	padding:10px 0px;
-}
-
-.buttonContainer button{
+.buttonContainer{
 	width: 85%;
 	margin: auto;
+	font-family: "Open Sans",sans-serif;
 }
 
 /*--------------------Log In View--------------*/
@@ -65,6 +54,10 @@
 	font-size: 20px;
 }
 
+.spacing {
+	margin-top: 25px;
+}
+
 .assignmentRow {
 	display: flex;
 	justify-content: space-between;
@@ -77,23 +70,32 @@
 }
 
 .assignmentRowInfo .dropOff {
-	font-weight: bold;
-	padding-bottom: 4px;
+	font-family: "Open Sans",sans-serif;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.assignment-task-info {
+	font-family: "Open Sans",sans-serif;
+	font-weight: 400;
+	font-size: 11px;
+	color: #9E9E9E;
 }
 
 .chevronButton {
 	padding-top: 10px;
-	padding-right: 20px;
 }
 
 .chevronButton .destination {
 	display: inline;
-	font-style: italic;
+	font-family: "Open Sans",sans-serif;
+	font-weight: 400;
+	font-size: 13px;
 }
 
 .chevronButton i.ion-chevron-right {
-	font-size: 28px;
-	padding-left: 1em;
+	font-size: 13px;
+	padding-left: 0.25em;
 }
 
 
@@ -108,24 +110,67 @@
 	justify-content: space-between;
 }
 
-
 .currentDropOffTime {
-	font-size: 20px;
-	font-weight: bold;
+	font-family: "Open Sans",sans-serif;
+	font-weight: 600;
+	font-size: 14px;
+	color: #606060;
 }
 
 .currentDestination{
-
-
+	font-family: "Open Sans",sans-serif;
+	font-weight: 400;
+	font-size: 13px;
+	color: #9E9E9E;
 }
 
-.taskPickup {
-	font-weight: bold;
-}
 
 .activeAssignmentDropoff {
 	font-weight: bold;
 }
+
+.taskInfoRow {
+	display: flex;
+	justify-content: space-between;
+}
+
+.taskInfoDetails {
+	font-family: "Open Sans",sans-serif;
+	font-weight: 600;
+}
+
+.numOfOrders {
+	margin-top: 1em;
+	font-family: "Open Sans",sans-serif;
+	font-weight: 500;
+	font-size: 14px;
+}
+
+.activeTask {
+	background-color: #ff5467;
+}
+
+.activeTask.taskInfoRow {
+	color: #FFF;
+}
+
+.taskPickup {
+	font-size: 9px;
+}
+
+.taskPlace {
+	font-size: 13px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.taskAddress {
+	font-weight: 300;
+	font-size: 10px;
+}
+
+.greyBackground {background-color: #F7F7F7;}
 
 .orderRow{
 	display: flex;
@@ -143,16 +188,31 @@
 }
 
 .orderRow .orderNumber{
-	font-style: italic;
+	font-size: 12px;
+	color: #A4A4A4;
+	font-weight: 400;
+	font-family: "Open Sans",sans-serif;
 }
 
 .orderRow .orderName {
-  font-weight: bold;
-  font-size: 20px;
+  font-size: 12px;
+	color: #545454;
+	font-weight: 400;
+	font-family: "Open Sans",sans-serif;
 }
 
 .orderRow .orderRoom {
-	font-weight: bold;
+	border-radius: 9px;
+	border: 1px solid #FF5467;
+	color: #FF5467;
+	background-color: #FFF;
+	font-family: "Open Sans",sans-serif;
+	font-weight: 400;
+	font-size: 10px;
+	box-sizing: border-box;
+	vertical-align: top;
+	padding: 2px 4px;
+	margin-left: 1em;
 }
 
 .orderRow .chevronButton {
@@ -173,6 +233,7 @@
 	justify-content: left;
 	font-size: 18px;
 	padding: 0.75em;
+	margin-top: 0.5em;
 }
 
 .orderInfoContainer div {
@@ -181,6 +242,27 @@
 
 .orderInfoRow a {
 	padding: 0.75em;
+}
+
+.order-name {
+	font-size: 13px;
+	color: #545454;
+	font-weight: 600;
+	font-family: "Open Sans",sans-serif;
+}
+
+.order-delivery-location {
+	font-size: 13px;
+	color: rgba(0, 0, 0, 0.45);
+	font-weight: 600;
+	font-family: "Open Sans",sans-serif;
+}
+
+.order-item-count {
+	font-size: 13px;
+	color: rgba(0, 0, 0, 0.45);
+	font-weight: 400;
+	font-family: "Open Sans",sans-serif;
 }
 
 .entryRow {
@@ -200,12 +282,14 @@
 }
 
 .entryIcon img{
-	max-width: 75px;
-	max-height: 75px;
+	max-width: 50px;
+	max-height: 50px;
 }
 
 .entryName {
-	font-size: 22px;
+	font-family: "mulisemibold";
+	font-size: 13px;
+	color: rgba(0, 0, 0, 0.85)
 }
 
 .checkbox {

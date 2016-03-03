@@ -117,3 +117,8 @@ ActiveCtrl.prototype.allEntriesChecked = function () {
 	}
 	this.allEntriesBeGot = true;
 };
+
+ActiveCtrl.prototype.checkStatus = function (task) {
+	console.log(task.status == 'active' ? true : false);
+	return task.status == 'active' ? true : false;
+};
