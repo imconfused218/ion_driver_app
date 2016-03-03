@@ -28,11 +28,9 @@
   <body ng-app="starter">
 
      <ion-side-menus>
-
         <ion-side-menu-content>
-
           <ion-nav-bar class='bar-light'>
-            <ion-nav-back-button class='button-icon ion-ios-arrow-left-c'>
+            <ion-nav-back-button>
             </ion-nav-back-button>
           </ion-nav-bar>
           <ion-nav-view></ion-nav-view>
@@ -54,18 +52,15 @@
       </ion-side-menus>
 
     
-
     <script id="assignmentsList.html" type="text/ng-template">
-
-
-          <ion-view view-title='Assignments'>
+          <ion-view view-title='Assignments' hide-back-button="true">
             <ion-nav-buttons side='left'>
-              <button ng-show='!assignmentsCtrl.isSelected()' class='button button-icon button-clear ion-navicon' ng-click='assignmentsCtrl.toggleSideMenu()'></button>
-              <button ng-show='assignmentsCtrl.isSelected()' class='button button-icon button-clear button-dark ion-chevron-left' ng-click='assignmentsCtrl.toggleSelectAssignment(assignment)'>Back</button>
+              <button class='button button-icon button-clear ion-navicon' ng-click='assignmentsCtrl.toggleSideMenu()'></button>
+              <!--<button ng-show='assignmentsCtrl.isSelected()' class='button button-icon button-clear button-dark ion-chevron-left' ng-click='assignmentsCtrl.toggleSelectAssignment(assignment)'>Back</button>-->
             </ion-nav-buttons>
-            <ion-content ng-show='!assignmentsCtrl.selectedAssignment'>
+            <ion-content>
               <ion-list>
-                <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.toggleSelectAssignment(assignment)' class='assignmentRow'>
+                <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>
                   <div class='assignmentRowInfo'>
                     <div class='dropOff'><span class='ion-pizza'></span>  {{assignment.dropoff}} Drop OFF</div>
                     <div>{{assignment.tasks.length}} Task(s) - {{assignment.tasks[0].place}}</div>
@@ -79,35 +74,40 @@
                 </ion-item>
               </ion-list>
             </ion-content>
-            <ion-content ng-show='assignmentsCtrl.isSelected()'>
-              <ion-list>
-                <ion-item class='currentAssignmentSubheader'>
-                  <div class='currentDropOffTime'>{{assignmentsCtrl.selectedAssignment.dropoff}} DROPOFF</div>
-                  <div class='currentDestination'>{{assignmentsCtrl.selectedAssignment.destination}}</div>
-                </ion-item>
-                <ion-item ng-repeat='task in assignmentsCtrl.selectedAssignment.tasks'>
-                  <div>{{task.pickup}}</div>
-                  <div>{{task.place}}</div>
-                  <div>{{task.address}}</div>
-                </ion-item>
-                <ion-item>
-                  <div>{{assignmentsCtrl.selectedAssignment.dropoff}}</div>
-                  <div>{{assignmentsCtrl.selectedAssignment.destination}}</div>
-                  <div>{{assignmentsCtrl.selectedAssignment.destination_address}}</div>
-                </ion-item>
-                <ion-item >
-                  <div class='buttonContainer button button-block button-dark icon-right ion-chevron-left'>Swipe left to Accept
-                    <ion-option-button class='button-positive icon ion-android-happy' ng-click='assignmentsCtrl.acceptAssignment()'></ion-option-button>
-                  </div>
-                </ion-item>
-              </ion-list>
-            </ion-content>
           </ion-view>
+    </script>
+
+    <script id="selectedAssignment.html" type="text/ng-template">
+      <ion-view view-title='Assignment Details'>
+        <ion-content>
+          <ion-list>
+            <ion-item class='currentAssignmentSubheader'>
+              <div class='currentDropOffTime'>{{assignmentsCtrl.agentService.selectedAssignment.dropoff}} DROPOFF</div>
+              <div class='currentDestination'>{{assignmentsCtrl.agentService.selectedAssignment.destination}}</div>
+            </ion-item>
+            <ion-item ng-repeat='task in assignmentsCtrl.agentService.selectedAssignment.tasks'>
+              <div>{{task.pickup}}</div>
+              <div>{{task.place}}</div>
+              <div>{{task.address}}</div>
+            </ion-item>
+            <ion-item>
+              <div>{{assignmentsCtrl.agentService.selectedAssignment.dropoff}}</div>
+              <div>{{assignmentsCtrl.agentService.selectedAssignment.destination}}</div>
+              <div>{{assignmentsCtrl.agentService.selectedAssignment.destination_address}}</div>
+            </ion-item>
+            <ion-item >
+              <div class='buttonContainer button button-block button-dark icon-right ion-chevron-left'>Swipe left to Accept
+                <ion-option-button class='button-positive icon ion-android-happy' ng-click='assignmentsCtrl.acceptAssignment()'></ion-option-button>
+              </div>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-view>
     </script>
 
     
     <script id="logIn.html" type="text/ng-template">
-      <ion-view view-title='Log In'>
+      <ion-view view-title='Log In' hide-back-button="true">
         <ion-header-bar class='bar-stable'>
 
         </ion-header-bar>
@@ -132,67 +132,74 @@
     </script>
 
     <script id="activeAssignment.html" type="text/ng-template">
-      <ion-view view-title='Active Assignment'>
-      <ion-header-bar class='bar-stable'>
-        <button ng-show='activeCtrl.orderSelected()' class='button button-icon button-clear button-dark ion-chevron-left' ng-click='activeCtrl.deSelectOrder()'>Back</button>
-        <h1 ng-show='activeCtrl.orderSelected()' class='title currentOrder'> Order {{activeCtrl.selectedOrder.id}}</h1>
-        <h1 ng-show='!activeCtrl.orderSelected()' class='title currentAssignment'>Current Assignment</h1>
-      </ion-header-bar>
-      <ion-content ng-show='!activeCtrl.orderSelected()'>
-        <ion-list>
-          <ion-item class='currentAssignmentSubheader'>
-            <div class='currentDropOffTime'>{{activeCtrl.agentService.activeAssignment.dropoff}} DROPOFF</div>
-            <div class='currentDestination'>{{activeCtrl.agentService.activeAssignment.destination}}</div>
-          </ion-item>
-          <div ng-repeat='task in activeCtrl.agentService.activeAssignment.tasks'>
-            <ion-item>
-              <div class='taskPickup'>{{task.pickup}}</div>
-              <div>{{task.place}}</div>
-              <div>{{task.address}}</div>
+      <ion-view view-title='Active Assignment' hide-back-button="true">
+        <ion-header-bar class='bar-stable'>
+        </ion-header-bar>
+        <ion-content>
+          <ion-list>
+            <ion-item class='currentAssignmentSubheader'>
+              <div class='currentDropOffTime'>{{activeCtrl.agentService.activeAssignment.dropoff}} DROPOFF</div>
+              <div class='currentDestination'>{{activeCtrl.agentService.activeAssignment.destination}}</div>
             </ion-item>
-            <ion-item class='orderRow' ng-repeat='order in task.orders' ng-click='activeCtrl.selectOrder(order)'>
-                <div class='orderDetails'>
-                  <div class='orderName'>{{order.name}}</div>
-                  <div class='orderRoom'>Room: {{order.details}}</div>
-                  <div class='orderNumber'>Order Number: {{order.id}}</div>
+            <div ng-repeat='task in activeCtrl.agentService.activeAssignment.tasks'>
+              <ion-item>
+                <div class='taskPickup'>{{task.pickup}}</div>
+                <div>{{task.place}}</div>
+                <div>{{task.address}}</div>
+              </ion-item>
+              <ion-item class='orderRow' ng-repeat='order in task.orders' ng-click='activeCtrl.selectOrder(order)'>
+                  <div class='orderDetails'>
+                    <div class='orderName'>{{order.name}}</div>
+                    <div class='orderRoom'>Room: {{order.details}}</div>
+                    <div class='orderNumber'>Order Number: {{order.id}}</div>
+                  </div>
+                <div class='chevronButton'>
+                  <i class='ionic ion-chevron-right'></i>
                 </div>
-              <div class='chevronButton'>
-                <i class='ionic ion-chevron-right'></i>
-              </div>
-            </ion-item>
-          </div>
-          <ion-item>
-            <div class='activeAssignmentDropoff'>{{activeCtrl.agentService.activeAssignment.dropoff}}</div>
-            <div>{{activeCtrl.agentService.activeAssignment.destination}}</div>
-            <div>{{activeCtrl.agentService.activeAssignment.destination_address}}</div>
-          </ion-item>
-        </ion-list>
-        <div class='buttonContainer'>
-           <button ng-show='activeCtrl.assignmentReadyToFinish' class='button button-block button-balanced' ng-click='activeCtrl.completeAssignment()'>Complete Assignment</button> 
-          <button ng-show='activeCtrl.allOrdersBeGot && !activeCtrl.assignmentReadyToFinish' class='button button-block button-positive' ng-click='activeCtrl.arriveAssignment()'>Arriving Now</button>
-        </div>
-      </ion-content>
-      <ion-content ng-show='activeCtrl.orderSelected()'>
-      <div class='orderInfoContainer'>
-        <div>Order for {{activeCtrl.selectedOrder.name}}</div>
-        <div>{{activeCtrl.selectedOrder.details}}</div>
-         - <div>{{activeCtrl.selectedOrder.item_count}} Item(s)</div>
-        <div class='ion-phone'></div>
-      </div>
-      <ion-list>
-        <ion-item ng-repeat='entry in activeCtrl.selectedOrder.entries' class='entryRow' ng-click='activeCtrl.entryToggleCheck(entry)' ng-class='{checked: entry.checked}'>
-            <div class='entryContainer'>
-              <div class='entryIcon'><img ng-src='{{entry.icon}}'></div>
-              <div class='entryName'>{{entry.name}}</div>
-               x <div>{{entry.quant}}</div>
+              </ion-item>
             </div>
-            <ion-checkbox ng-model='entry.checked' class='checkbox' ng-class='{checked: entry.checked}'></ion-checkbox>
-        </ion-item>
-      </ion-list>
-      <div class='buttonContainer' ng-show='!activeCtrl.selectedOrder.isGot'>
-          <button class='button button-block button-calm' ng-click='activeCtrl.orderBeGot()'>Got it!</button>
-        </div>
-      </ion-content>
+            <ion-item>
+              <div class='activeAssignmentDropoff'>{{activeCtrl.agentService.activeAssignment.dropoff}}</div>
+              <div>{{activeCtrl.agentService.activeAssignment.destination}}</div>
+              <div>{{activeCtrl.agentService.activeAssignment.destination_address}}</div>
+            </ion-item>
+          </ion-list>
+          <div class='buttonContainer'>
+             <button ng-show='activeCtrl.assignmentReadyToFinish' class='button button-block button-balanced' ng-click='activeCtrl.completeAssignment()'>Complete Assignment</button> 
+            <button ng-show='activeCtrl.agentService.allOrdersBeGot && !activeCtrl.assignmentReadyToFinish' class='button button-block button-positive' ng-click='activeCtrl.arriveAssignment()'>Arriving Now</button>
+          </div>
+        </ion-content>
+      </ion-view>
     </script>
+
+    <script id="selectedOrder.html" type="text/ng-template">
+      <ion-view view-title='Order Details'>
+        <ion-content>
+          <div class='orderInfoRow'>
+            <div class='orderInfoContainer'>
+              <div>Order for {{activeCtrl.agentService.selectedOrder.name}}</div>
+              <div>{{activeCtrl.agentService.selectedOrder.details}}</div>
+               - <div>{{activeCtrl.agentService.selectedOrder.item_count}} Item(s)</div>
+            </div>
+            <a class='phoneButton ion-ios-telephone' ng-href="tel: {{activeCtrl.agentService.selectedOrder.phone_number}}"></a>
+          </div>
+          <ion-list>
+            <ion-item ng-repeat='entry in activeCtrl.agentService.selectedOrder.entries' class='entryRow' ng-click='activeCtrl.entryToggleCheck(entry)' ng-class='{checked: entry.checked}'>
+                <div class='entryContainer'>
+                  <div class='entryIcon'><img ng-src='{{entry.icon}}'></div>
+                  <div class='entryName'>{{entry.name}}</div>
+                   x <div>{{entry.quant}}</div>
+                </div>
+                <ion-checkbox ng-model='entry.checked' class='checkbox' ng-class='{checked: entry.checked}'></ion-checkbox>
+            </ion-item>
+          </ion-list>
+          <div class='buttonContainer' ng-show='!activeCtrl.agentService.selectedOrder.isGot && activeCtrl.allEntriesBeGot'>
+            <button class='button button-block button-calm' ng-click='activeCtrl.orderBeGot()'>Got it!</button>
+          </div>
+        </ion-content>
+      </ion-view>
+    </script>
+
+
   </body>
 </html>

@@ -54,6 +54,16 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
       controller: 'activeCtrl as activeCtrl',
       templateUrl: 'activeAssignment.html'
     })
+    .state('selectedOrder', {
+      url: '/selectedOrder',
+      controller: 'activeCtrl as activeCtrl',
+      templateUrl: 'selectedOrder.html'
+    })
+    .state('selectedAssignment', {
+      url: '/selectedAssignment',
+      controller: 'assignmentsListController as assignmentsCtrl',
+      templateUrl: 'selectedAssignment.html'
+    });
   $urlRouterProvider.otherwise('/logIn');
 })
 
@@ -64,7 +74,6 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $location) {
   this.$location = $location;
   this.agentService = agentService;
 
-  this.selectedAssignment;
 }
 
 //Shows or hides side menu
@@ -79,26 +88,24 @@ AssignmentsCtrl.prototype.toggleDuty = function (cluster) {
 };
 
 //Toggle select and isSelected are for changing the view to see the details of the order
-AssignmentsCtrl.prototype.toggleSelectAssignment = function(assignment){
-  if(assignment == this.selectedAssignment){
-    this.selectedAssignment = undefined;
-  } else {
-    this.selectedAssignment = assignment;
-  }
+AssignmentsCtrl.prototype.selectAssignment = function(assignment){
+    this.agentService.selectedAssignment = assignment;
+    this.$location.path('/selectedAssignment');
 };
 
+/*
 AssignmentsCtrl.prototype.isSelected = function () {
   return this.selectedAssignment ? true :false;
-};
+};*/
 
 //Tells the server that a user is taking an assignment
 AssignmentsCtrl.prototype.acceptAssignment = function () {
   var self = this;
-  var assignmentId = this.selectedAssignment.id;
+  var assignmentId = this.agentService.selectedAssignment.id;
 
   this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
     self.agentService.getAssignments();
-    self.selectedAssignment = undefined;
+    self.agentService.selectedAssignment = undefined;
     self.$location.path('/activeAssignment')
   })
 };

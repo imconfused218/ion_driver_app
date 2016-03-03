@@ -21,7 +21,13 @@ function AgentService ($http, $q, $location, $interval, $window, $ionicLoading) 
 
   this.assignments = [];
 
+  this.selectedAssignment;
+
+  this.selectedOrder;
+
   this.activeAssignment;
+
+  this.allOrdersBeGot = false;
 
   this.intervalCheck;
 

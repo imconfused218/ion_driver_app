@@ -162,6 +162,11 @@
 
 /************************Selected Order View*****************/
 
+.orderInfoRow {
+	display: flex;
+	justify-content: space-between;
+}
+
 
 .orderInfoContainer {
 	display: flex;
@@ -172,6 +177,10 @@
 
 .orderInfoContainer div {
 	padding-left: 10px;
+}
+
+.orderInfoRow a {
+	padding: 0.75em;
 }
 
 .entryRow {
@@ -208,6 +217,10 @@
 
 .checked {
 	background-color: lightgreen;
+}
+
+.phoneButton {
+	font-size: 26px;
 }
 
 
