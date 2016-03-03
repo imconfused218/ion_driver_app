@@ -102,27 +102,28 @@ AgentService.prototype.getStatus = function () {
 };
 
 //Tells the server to go on-duty or off-duty
-AgentService.prototype.postStatus = function (cluster) {
+AgentService.prototype.postStatus = function () {
   var self = this;
 
-  var groupId = cluster.id;
+  for (var cluster in this.clusters){
 
-  var on_duty = cluster.on_duty == 1 ? 0 : 1;
+    var groupId = cluster.id;
 
-  cluster.on_duty = on_duty;
+    var on_duty = cluster.on_duty
 
-  var emptyData = {};
+    var emptyData = {};
 
-  return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
-    console.log('post status results', results);
-    if (self.checkForOnDuty()){
-    	self.startIntervalCheck();
-    	self.getAssignments();
-    } else {
-    	self.stopIntervalCheck();
-    	self.assignments = [];
-    }
-  })
+    return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
+      console.log('post status results', results);
+      if (self.checkForOnDuty()){
+      	self.startIntervalCheck();
+      	self.getAssignments();
+      } else {
+      	self.stopIntervalCheck();
+      	self.assignments = [];
+      }
+    })
+  }
 };
 
 //Checks to see if user currently has an active assignment

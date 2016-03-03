@@ -82,8 +82,8 @@ AssignmentsCtrl.prototype.toggleSideMenu = function () {
 };
 
 //Tells server if user is on duty or off
-AssignmentsCtrl.prototype.toggleDuty = function (cluster) {
-  this.agentService.postStatus(cluster);
+AssignmentsCtrl.prototype.toggleDuty = function () {
+  this.agentService.postStatus();
   this.toggleSideMenu();
 };
 

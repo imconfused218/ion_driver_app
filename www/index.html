@@ -42,10 +42,18 @@
           </ion-header-bar>
           <ion-content>
             <ul class="workGroups">
-              <li class="offDuty item item-button-right" ng-class="{ &apos;onDuty&apos;: cluster.on_duty }" ng-repeat="cluster in assignmentsCtrl.agentService.clusters">
+              <li class="offDuty item item-toggle" ng-class="{ &apos;onDuty&apos;: cluster.on_duty }" ng-repeat="cluster in assignmentsCtrl.agentService.clusters">
                 {{cluster.name}}
-                  <button ng-click="assignmentsCtrl.toggleDuty(cluster)" class="button button-positive">Go</button>
+                <label class='toggle toggle-positive'>
+                  <input type='checkbox' ng-model='cluster.on_duty'>
+                  <div class='track'>
+                    <div class='handle'></div>
+                  </div>
+                </label>
               </li>
+              <button class='button button-block button-royal' ng-click=''>
+                Update Duty
+              </button>
             </ul>
           </ion-content>
         </ion-side-menu>
