@@ -44,14 +44,14 @@
             <ul class="workGroups">
               <li class="offDuty item item-toggle" ng-class="{ &apos;onDuty&apos;: cluster.on_duty }" ng-repeat="cluster in assignmentsCtrl.agentService.clusters">
                 {{cluster.name}}
-                <label class='toggle toggle-positive'>
-                  <input type='checkbox' ng-model='cluster.on_duty'>
-                  <div class='track'>
-                    <div class='handle'></div>
+                <label class="toggle toggle-positive">
+                  <input type="checkbox" ng-model="cluster.on_duty">
+                  <div class="track">
+                    <div class="handle"></div>
                   </div>
                 </label>
               </li>
-              <button class='button button-block button-royal' ng-click='assignmentsCtrl.toggleDuty()'>
+              <button class="button button-block button-royal" ng-click="assignmentsCtrl.toggleDuty()">
                 Update Duty
               </button>
             </ul>
@@ -68,7 +68,7 @@
             
             <ion-content class='contentContainer'>
               <div class='offDutyCover' ng-show='!assignmentsCtrl.agentService.onDuty'>You are currently offline</div>
-              <div class='noAssignments' ng-show='assignmentsCtrl.agentService.assignments && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
+              <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
               <ion-list >
                 <div class='spacing'></div>
                 <ion-item  ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>
@@ -113,7 +113,7 @@
             </ion-item>
             <ion-item >
               <div class='buttonContainer button button-block button-dark icon-right ion-chevron-left'>Swipe left to Accept
-                <ion-option-button class='button-assertive icon ion-alert' ng-click='assignmentsCtrl.acceptAssignment()'></ion-option-button>
+                <ion-option-button class='button button-block button-calm icon ion-checkmark-round' ng-click='assignmentsCtrl.acceptAssignment()'></ion-option-button>
               </div>
             </ion-item>
           </ion-list>
@@ -208,8 +208,8 @@
             <ion-item ng-repeat='entry in activeCtrl.agentService.selectedOrder.entries' class='entryRow' ng-click='activeCtrl.entryToggleCheck(entry)' ng-class='{checked: entry.checked}'>
                 <div class='entryContainer'>
                   <div class='entryIcon'><img ng-src='http:{{entry.icon}}'></div>
+                   x<div>{{entry.quant}}</div>
                   <div class='entryName'>{{entry.name}}</div>
-                   x <div>{{entry.quant}}</div>
                 </div>
                 <ion-checkbox ng-model='entry.checked' class='checkbox' ng-class='{checked: entry.checked}'></ion-checkbox>
             </ion-item>

@@ -252,6 +252,7 @@
 .orderInfoRow {
 	display: flex;
 	justify-content: space-between;
+	padding: 0.5em 0em;
 }
 
 
@@ -259,7 +260,7 @@
 	display: flex;
 	justify-content: left;
 	font-size: 18px;
-	padding: 0.75em;
+
 	margin-top: 0.5em;
 }
 
@@ -268,7 +269,7 @@
 }
 
 .orderInfoRow a {
-	padding: 0.75em;
+	padding-right: 0.25em;
 }
 
 .order-name {
@@ -316,12 +317,12 @@
 .entryName {
 	font-family: "mulisemibold";
 	font-size: 13px;
-	color: rgba(0, 0, 0, 0.85)
+	color: rgba(0, 0, 0, 0.85);
+	margin-left: -10px;
 }
 
 .checkbox {
 	border: none;
-	padding-right: 2em;
 	pointer-events: none;
 }
 
