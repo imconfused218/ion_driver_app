@@ -51,7 +51,7 @@
                   </div>
                 </label>
               </li>
-              <button class='button button-block button-royal' ng-click=''>
+              <button class='button button-block button-royal' ng-click='assignmentsCtrl.toggleDuty()'>
                 Update Duty
               </button>
             </ul>
@@ -65,7 +65,10 @@
             <ion-nav-buttons side='left'>
               <button class='button button-icon button-clear ion-navicon' ng-click='assignmentsCtrl.toggleSideMenu()'></button>
             </ion-nav-buttons>
+            
             <ion-content class='contentContainer'>
+              <div class='offDutyCover' ng-show='!assignmentsCtrl.agentService.onDuty'>You are currently offline</div>
+              <div class='noAssignments' ng-show='assignmentsCtrl.agentService.assignments && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
               <ion-list >
                 <div class='spacing'></div>
                 <ion-item  ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>

@@ -17,6 +17,8 @@ function AgentService ($http, $q, $location, $interval, $window, $ionicLoading) 
   
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
 
+  this.onduty;
+
   this.clusters = [];
 
   this.assignments = [];
@@ -101,29 +103,45 @@ AgentService.prototype.getStatus = function () {
   });
 };
 
-//Tells the server to go on-duty or off-duty
-AgentService.prototype.postStatus = function () {
+
+AgentService.prototype.resolveStatuses = function () {
+  var statusArray= [];
   var self = this;
 
-  for (var cluster in this.clusters){
+  console.log('clusters', this.clusters);
 
-    var groupId = cluster.id;
-
-    var on_duty = cluster.on_duty
-
-    var emptyData = {};
-
-    return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
-      console.log('post status results', results);
-      if (self.checkForOnDuty()){
-      	self.startIntervalCheck();
-      	self.getAssignments();
-      } else {
-      	self.stopIntervalCheck();
-      	self.assignments = [];
-      }
-    })
+  for (var i in this.clusters){
+    statusArray.push(this.postStatus(this.clusters[i]));
   }
+
+  this.$q.all(statusArray).then(function(results){
+    if (self.checkForOnDuty()){
+      self.startIntervalCheck();
+      self.getAssignments();
+    } else {
+      self.stopIntervalCheck();
+      self.assignments = [];
+    }
+  })
+};
+
+//Tells the server to go on-duty or off-duty
+AgentService.prototype.postStatus = function (cluster) {
+  var self = this;
+
+  console.log('cluster', cluster);
+
+  var groupId = cluster.id;
+
+  var on_duty = cluster.on_duty
+
+  var emptyData = {};
+
+  return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
+    console.log('post status results', results);
+    return results;
+  })
+
 };
 
 //Checks to see if user currently has an active assignment
@@ -182,6 +200,8 @@ AgentService.prototype.checkForChanges = function () {
 AgentService.prototype.startIntervalCheck = function () {
 	var self = this;
 
+  this.onDuty = true;
+
 	if (angular.isDefined(this.intervalCheck)){
 		return;
 	}
@@ -194,6 +214,9 @@ AgentService.prototype.startIntervalCheck = function () {
 
 //Stops calling checkForChanges when user goes off-duty
 AgentService.prototype.stopIntervalCheck = function () {
+
+  this.onDuty = false;
+
 	if (angular.isDefined(this.intervalCheck)) {
 		this.$interval.cancel(this.intervalCheck);
 		this.intervalCheck = undefined;

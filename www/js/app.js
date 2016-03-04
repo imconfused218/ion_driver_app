@@ -83,7 +83,7 @@ AssignmentsCtrl.prototype.toggleSideMenu = function () {
 
 //Tells server if user is on duty or off
 AssignmentsCtrl.prototype.toggleDuty = function () {
-  this.agentService.postStatus();
+  this.agentService.resolveStatuses();
   this.toggleSideMenu();
 };
 
@@ -92,11 +92,6 @@ AssignmentsCtrl.prototype.selectAssignment = function(assignment){
     this.agentService.selectedAssignment = assignment;
     this.$location.path('/selectedAssignment');
 };
-
-/*
-AssignmentsCtrl.prototype.isSelected = function () {
-  return this.selectedAssignment ? true :false;
-};*/
 
 //Tells the server that a user is taking an assignment
 AssignmentsCtrl.prototype.acceptAssignment = function () {

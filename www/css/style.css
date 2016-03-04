@@ -50,6 +50,33 @@
 
 /**********************Assignment List View**************/
 
+.offDutyCover {
+	background-color: #888;
+	color: white;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	height: 150px;
+	top: 5em;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 18px;
+	line-height: 150px;
+	font-weight: 600;
+}
+
+.noAssignments {
+	color: #555;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	height: 100px;
+	top: 5em;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 18px;
+	line-height: 100px;
+	font-weight: 600;
+}
+
 .title.driverAppTitle {
 	font-size: 20px;
 }
