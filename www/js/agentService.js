@@ -43,6 +43,8 @@ function AgentService ($http, $q, $location, $interval, $window, $ionicLoading) 
 
   this.currentLocation;
 
+
+  //Config object for the loading screen
   this.ionicLoadingConfig = {
     content: 'Loading',
     animation: 'fade-in',
@@ -53,7 +55,11 @@ function AgentService ($http, $q, $location, $interval, $window, $ionicLoading) 
 
 }
 
-//Passes user email and password to server
+/**
+ * Passes user email and password to server
+ * @param{object} logInInfo - An object wih user log-in information
+ * @returns{Promise<Object>}
+ */
 AgentService.prototype.logIn = function (logInInfo) {
   var self= this;
   var logInUrl = 'api/1/auth/';
@@ -73,7 +79,10 @@ AgentService.prototype.logIn = function (logInInfo) {
 
 };
 
-//Gets all assignments for current onDuty location
+/**
+ * Gets all assignments for current onDuty location
+ * @returns {Promise<Object>}
+ */
 AgentService.prototype.getAssignments = function () {
   var self = this;
 
@@ -89,7 +98,10 @@ AgentService.prototype.getAssignments = function () {
 };
 
 
-//Checks to see if agent is on-duty
+/**
+ * Checks to see if agent is on-duty
+ * @returns {Promise<Object>}
+ */
 AgentService.prototype.getStatus = function () {
   var self = this;
 
@@ -103,7 +115,9 @@ AgentService.prototype.getStatus = function () {
   });
 };
 
-
+/**
+ * Resolves whether or not an agent is on duty
+ */
 AgentService.prototype.resolveStatuses = function () {
   var statusArray= [];
   var self = this;
@@ -125,7 +139,11 @@ AgentService.prototype.resolveStatuses = function () {
   })
 };
 
-//Tells the server to go on-duty or off-duty
+/**
+ * Tells the server to go on-duty or off-duty
+ * @param {object} cluster - A cluster of hotels
+ * @returns {Promise<object>}
+ */
 AgentService.prototype.postStatus = function (cluster) {
   var self = this;
 
@@ -144,7 +162,9 @@ AgentService.prototype.postStatus = function (cluster) {
 
 };
 
-//Checks to see if user currently has an active assignment
+/**
+* Checks to see if user currently has an active assignment
+*/
 AgentService.prototype.checkForActive = function () {
   console.log('checkForACtive', this.assignments);
 	if(angular.isDefined(this.assignments[0])){
@@ -156,6 +176,10 @@ AgentService.prototype.checkForActive = function () {
 	}
 };
 
+/**
+ * Checks to see if the agent is currently on duty
+ * @returns {Boolean}
+ */
 AgentService.prototype.checkForOnDuty = function () {
 	for (var i in this.clusters){
 		if(this.clusters[i].on_duty){
@@ -165,15 +189,20 @@ AgentService.prototype.checkForOnDuty = function () {
 	return false;
 };
 
-//Gets the user's current location
+/**
+* Gets the user's current location
+*/
 AgentService.prototype.getLocation = function () {
   var self = this;
-  return navigator.geolocation.getCurrentPosition(function(position){
+  navigator.geolocation.getCurrentPosition(function(position){
     self.currentLocation = position;
   })
 };
 
-//Asks server if the UI needs to be updated
+/**
+ * Asks server if the UI needs to be updated
+ * @returns{Promise<Object>}
+ */
 AgentService.prototype.checkForChanges = function () {
 	var self = this;
 	var updateObj = {
@@ -196,7 +225,9 @@ AgentService.prototype.checkForChanges = function () {
 	});
 };
 
-//Calls checkForChanges() every 15 seconds when user is on-duty
+/**
+ * Calls checkForChanges() every 15 seconds when user is on-duty
+ */
 AgentService.prototype.startIntervalCheck = function () {
 	var self = this;
 
@@ -212,7 +243,9 @@ AgentService.prototype.startIntervalCheck = function () {
 	}, 15000);
 };
 
-//Stops calling checkForChanges when user goes off-duty
+/** 
+* Stops calling checkForChanges when user goes off-duty
+*/
 AgentService.prototype.stopIntervalCheck = function () {
 
   this.onDuty = false;
@@ -223,7 +256,12 @@ AgentService.prototype.stopIntervalCheck = function () {
 	}
 };
 
-//General function for making a change to an assignment, ex. "Got it", "arriving", "complete"
+/**
+ * General function for making a change to an assignment, ex. "Got it", "arriving", "complete"
+ * @param{Number} assignmentId
+ * @param{String} action
+ * @returns{Promise{Object}}
+ */
 AgentService.prototype.assignmentAction = function (assignmentId, action) {
   var self = this;
 	var emptyObj = {};
@@ -236,7 +274,11 @@ AgentService.prototype.assignmentAction = function (assignmentId, action) {
 	});
 };
 
-//Posts to server when all orders for a task have been "got"
+/**
+* Posts to server when all orders for a task have been "got"
+* @param{Number} taskId
+* @returns{Promise<Object>}
+*/
 AgentService.prototype.taskComplete = function (taskId) {
   var emptyObj = {};
   var self = this;

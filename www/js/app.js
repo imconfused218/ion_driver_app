@@ -76,24 +76,29 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $location) {
 
 }
 
-//Shows or hides side menu
+/**Shows or hides side menu */
 AssignmentsCtrl.prototype.toggleSideMenu = function () {
   this.$ionicSideMenuDelegate.toggleLeft();
 };
 
-//Tells server if user is on duty or off
+/**Tells server if user is on duty or off */
 AssignmentsCtrl.prototype.toggleDuty = function () {
   this.agentService.resolveStatuses();
   this.toggleSideMenu();
 };
 
-//Toggle select and isSelected are for changing the view to see the details of the order
+/**
+ * When a user clicks on an assignment for more details the view changes
+ * @param{object} assignment - An assignment for a driver
+ */
 AssignmentsCtrl.prototype.selectAssignment = function(assignment){
     this.agentService.selectedAssignment = assignment;
     this.$location.path('/selectedAssignment');
 };
 
-//Tells the server that a user is taking an assignment
+/**
+ *Tells the server that a user is taking an assignment
+ */
 AssignmentsCtrl.prototype.acceptAssignment = function () {
   var self = this;
   var assignmentId = this.agentService.selectedAssignment.id;
@@ -122,7 +127,9 @@ function LogInCtrl (agentService, $location, $window) {
   }
 }
 
-//Passes email and password to server
+/**
+ * Passes email and password to server
+ */
 LogInCtrl.prototype.logIn = function () {
   var self = this;
   this.agentService.logIn(this.logInField).then(function(results){

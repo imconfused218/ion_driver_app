@@ -24,13 +24,18 @@ function ActiveCtrl (agentService, $location) {
 	this.assignmentReadyToFinish = false;
 }
 
-//Sends this back to the server when all orders for a task have been picked up
+/**
+ * Sends this back to the server when all orders for a task have been picked up
+ * @param{Number} taskId
+ */
 ActiveCtrl.prototype.taskComplete = function (taskId) {
 	var emptyObj = {};
 	this.agentService.taskComplete(taskId);
 };
 
-//For sending a text message to the guest that the driver has arrived
+/**
+* For sending a text message to the guest that the driver has arrived
+*/
 ActiveCtrl.prototype.arriveAssignment = function () {
 	var emptyObj = {};
 	var self = this;
@@ -40,7 +45,9 @@ ActiveCtrl.prototype.arriveAssignment = function () {
 	});
 };
 
-//Closes out the assignment and sends the user back to the assignmentList view
+/**
+* Closes out the assignment and sends the user back to the assignmentList view
+*/
 ActiveCtrl.prototype.completeAssignment = function () {
 	var self = this;
 	var emptyObj = {};
@@ -54,21 +61,33 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	})
 };
 
-//selectOrder, deSelectOrder, and orderSelected are for changing the view to see order details
+/**
+* selectOrder, deSelectOrder, and orderSelected are for changing the view to see order details
+* @param{Object} order
+*/
 ActiveCtrl.prototype.selectOrder = function (order) {
 	this.agentService.selectedOrder = order;
 	this.$location.path('/selectedOrder');
 };
 
+/**
+* selectOrder, deSelectOrder, and orderSelected are for changing the view to see order details
+*/
 ActiveCtrl.prototype.deSelectOrder = function() {
 	this.agentService.selectedOrder = undefined;
 };
 
+/**
+ * selectOrder, deSelectOrder, and orderSelected are for changing the view to see order details
+ * @returns{Boolean}
+ */
 ActiveCtrl.prototype.orderSelected = function () {
 	return this.agentService.selectedOrder ? true : false;
 };
 
-//When a user gets an order it marks it as picked up and checks to see if that's all the orders
+/**
+ * When a user gets an order it marks it as picked up and checks to see if that's all the orders
+ */
 ActiveCtrl.prototype.orderBeGot = function () {
 	this.agentService.selectedOrder['isGot'] = true;
 	this.agentService.selectedOrder = undefined;
@@ -77,7 +96,9 @@ ActiveCtrl.prototype.orderBeGot = function () {
 	this.checkOrdersBeGot();
 };
 
-//Checks to see if all the orders at a restaurant have been taken, if so calls completeTask()
+/**
+ * Checks to see if all the orders at a restaurant have been taken, if so calls completeTask()
+ */
 ActiveCtrl.prototype.checkOrdersBeGot = function () {
 	var currentAssignment = this.agentService.activeAssignment;
 
@@ -102,12 +123,19 @@ ActiveCtrl.prototype.checkOrdersBeGot = function () {
 	this.agentService.allOrdersBeGot = true;
 };
 
+/**
+* For confirming an entry
+* @param{Object} entry
+*/
 ActiveCtrl.prototype.entryToggleCheck = function (entry) {
 	console.log('entry', entry);
 	entry.checked = !entry.checked;
 	this.allEntriesChecked();
 };
 
+/**
+* Checks to see if all entries have been checked
+*/
 ActiveCtrl.prototype.allEntriesChecked = function () {
 	for(var i in this.agentService.selectedOrder.entries) {
 		var entry = this.agentService.selectedOrder.entries[i];
@@ -118,7 +146,11 @@ ActiveCtrl.prototype.allEntriesChecked = function () {
 	this.allEntriesBeGot = true;
 };
 
+/**
+* For highlighting the current task
+* @param{Object} task
+* @returns{Boolean}
+*/
 ActiveCtrl.prototype.checkStatus = function (task) {
-	console.log(task.status == 'active' ? true : false);
 	return task.status == 'active' ? true : false;
 };
