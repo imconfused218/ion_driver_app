@@ -187,7 +187,7 @@
           </ion-list>
           <div class='buttonContainer'>
              <button ng-show='activeCtrl.assignmentReadyToFinish' class='button button-block button-balanced' ng-click='activeCtrl.completeAssignment()'>Complete Assignment</button> 
-            <button ng-show='activeCtrl.agentService.allOrdersBeGot && !activeCtrl.assignmentReadyToFinish' class='button button-block button-positive' ng-click='activeCtrl.arriveAssignment()'>Arriving Now</button>
+            <button ng-show='activeCtrl.agentService.allTasksComplete && !activeCtrl.assignmentReadyToFinish' class='button button-block button-positive' ng-click='activeCtrl.arriveAssignment()'>Arriving Now</button>
           </div>
         </ion-content>
       </ion-view>
@@ -205,16 +205,21 @@
             <a class='phoneButton ion-ios-telephone' ng-href="tel: {{activeCtrl.agentService.selectedOrder.phone_number}}"></a>
           </div>
           <ion-list>
-            <ion-item ng-repeat='entry in activeCtrl.agentService.selectedOrder.entries' class='entryRow' ng-click='activeCtrl.entryToggleCheck(entry)' ng-class='{checked: entry.checked}'>
+            <ion-item ng-repeat='entry in activeCtrl.agentService.selectedOrder.entries' ng-click='activeCtrl.entryToggleCheck(entry)' ng-class='{checked: entry.checked}'>
+              <div class='entryRow'>
                 <div class='entryContainer'>
                   <div class='entryIcon'><img ng-src='http:{{entry.icon}}'></div>
                    x<div>{{entry.quant}}</div>
-                  <div class='entryName'>{{entry.name}}</div>
+                  <div class='entryName'>
+                    {{entry.name}}
+                    <div class='entryNotes' ng-repeat='note in entry.notes'>{{note}}</div>
+                  </div>
                 </div>
                 <ion-checkbox ng-model='entry.checked' class='checkbox' ng-class='{checked: entry.checked}'></ion-checkbox>
+              </div>
             </ion-item>
           </ion-list>
-          <div class='buttonContainer' ng-show='!activeCtrl.agentService.selectedOrder.isGot && activeCtrl.allEntriesBeGot'>
+          <div class='buttonContainer' ng-show='!activeCtrl.checkOrderBeGot(activeCtrl.agentService.selectedOrder) && activeCtrl.allEntriesBeGot'>
             <button class='button button-block button-calm' ng-click='activeCtrl.orderBeGot()'>Got it!</button>
           </div>
         </ion-content>

@@ -89,7 +89,7 @@ AssignmentsCtrl.prototype.toggleDuty = function () {
 
 /**
  * When a user clicks on an assignment for more details the view changes
- * @param{object} assignment - An assignment for a driver
+ * @param{Object} assignment - An assignment for a driver
  */
 AssignmentsCtrl.prototype.selectAssignment = function(assignment){
     this.agentService.selectedAssignment = assignment;

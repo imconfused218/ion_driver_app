@@ -29,7 +29,9 @@ function AgentService ($http, $q, $location, $interval, $window, $ionicLoading) 
 
   this.activeAssignment;
 
-  this.allOrdersBeGot = false;
+  this.orderGottenIds = [];
+
+  this.allTasksComplete = false;
 
   this.intervalCheck;
 
@@ -169,7 +171,7 @@ AgentService.prototype.checkForActive = function () {
   console.log('checkForACtive', this.assignments);
 	if(angular.isDefined(this.assignments[0])){
 	  if(this.assignments[0].active){
-      console.log('assignmentsfromcheck', this.assignments[0])
+      console.log('assignmentFromCheckForActive', this.assignments[0])
 	    this.activeAssignment = this.assignments[0];
 	    this.$location.path('/activeAssignment');
 	  }

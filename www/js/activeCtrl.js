@@ -54,9 +54,10 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'complete/').then(function(results){
 		console.log('results arrive assignment, results');
 		self.agentService.selectedOrder = undefined;
-		self.agentService.allOrdersBeGot = false;
+		self.agentService.allTasksComplete = false;
 		self.assignmentReadyToFinish = false;
 		self.agentService.activeAssignment = undefined;
+		self.agentService.orderGottenIds = [];
 		self.$location.path('/list');
 	})
 };
@@ -89,38 +90,51 @@ ActiveCtrl.prototype.orderSelected = function () {
  * When a user gets an order it marks it as picked up and checks to see if that's all the orders
  */
 ActiveCtrl.prototype.orderBeGot = function () {
+	this.agentService.orderGottenIds.push(this.agentService.selectedOrder.id)
 	this.agentService.selectedOrder['isGot'] = true;
 	this.agentService.selectedOrder = undefined;
-	this.checkOrdersBeGot();
+	this.checkAllTasksComplete();
 	this.$location.path('/activeAssignment');
-	this.checkOrdersBeGot();
+};
+
+/**
+ * Checks to see in orderGottenIds if all of them have been pushed
+ * @param{Object} task
+ * @returns{Boolean}
+ */
+ActiveCtrl.prototype.checkOrderBeGot = function (order) {
+		if(this.agentService.orderGottenIds.indexOf(order.id) < 0){
+			return false;
+		} else {
+			return true;
+		}
+
 };
 
 /**
  * Checks to see if all the orders at a restaurant have been taken, if so calls completeTask()
  */
-ActiveCtrl.prototype.checkOrdersBeGot = function () {
+ActiveCtrl.prototype.checkAllTasksComplete = function () {
 	var currentAssignment = this.agentService.activeAssignment;
 
-	console.log('current assignment', currentAssignment, 'allOrdersBeGot', this.agentService.allOrdersBeGot);
+	console.log('current assignment', currentAssignment, 'allTasksComplete', this.agentService.allTasksComplete);
 
 	for (var i = 0; i < currentAssignment.tasks.length; i++){
 		var currentTask = currentAssignment.tasks[i];
 		console.log('currentTask', currentTask);
-		if (!currentTask['isGot']){
-			console.log('this got called', currentTask['isGot']);
-			for (var x = 0; x < currentTask.orders.length; x++){
-				var currentOrder = currentTask.orders[x];
-				if(!currentOrder.isGot){
+		if (!currentTask.status == 'complete'){
+			console.log('this got called', currentTask.status);
+			for (var x=0; x < currentTask.orders.length; x++){
+				if(this.checkOrderBeGot(currentTask.orders[x])) {
 					return;
 				}
 			}
-			currentTask['isGot'] = true;
-			console.log('currentTask', currentTask['isGot']);
+			currentTask.status = "complete";
+			console.log('currentTask', currentTask.status);
 			this.taskComplete(currentTask.id);
 		}
 	}
-	this.agentService.allOrdersBeGot = true;
+	this.agentService.allTasksComplete = true;
 };
 
 /**
@@ -128,7 +142,6 @@ ActiveCtrl.prototype.checkOrdersBeGot = function () {
 * @param{Object} entry
 */
 ActiveCtrl.prototype.entryToggleCheck = function (entry) {
-	console.log('entry', entry);
 	entry.checked = !entry.checked;
 	this.allEntriesChecked();
 };
@@ -140,6 +153,7 @@ ActiveCtrl.prototype.allEntriesChecked = function () {
 	for(var i in this.agentService.selectedOrder.entries) {
 		var entry = this.agentService.selectedOrder.entries[i];
 		if (!entry.checked) {
+			this.allEntriesBeGot = false;
 			return;
 		}
 	}
