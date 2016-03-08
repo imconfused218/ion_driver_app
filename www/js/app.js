@@ -1,9 +1,9 @@
 
 
 //Main module that everything is based off of
-angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentService'])
+angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentService'])
 
-.run(function($ionicPlatform, $location) {
+.run(function($ionicPlatform, $ionicHistory) {
   $ionicPlatform.ready(function() {
 
     var push = new Ionic.Push({
@@ -22,13 +22,23 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
       StatusBar.styleDefault();
     }
   });
+
+  $ionicPlatform.registerBackButtonAction(function (event) {
+    if ($ionicHistory.currentStateName() === 'assignmentsList' ){
+      event.preventDefault();
+    } else if ($ionicHistory.currentStateName() === 'activeAssignment'){
+      event.preventDefault();
+    } else {
+      $ionicHistory.goBack();
+    }
+  }, 101);
 })
 
 .controller('assignmentsListController', AssignmentsCtrl)
 .controller('logInCtrl', LogInCtrl)
 
 //routing for different views in driverApp
-.config(function($stateProvider, $urlRouterProvider, $httpProvider){
+.config(function($compileProvider, $stateProvider, $urlRouterProvider, $httpProvider){
   $stateProvider
     .state('assignmentsList', {
       url: '/list',
@@ -65,15 +75,31 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
       templateUrl: 'selectedAssignment.html'
     });
   $urlRouterProvider.otherwise('/logIn');
-})
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(geo|mailto|tel|maps):/);
+});
 
 
-////////////////////////////////Controller for the assignmentList views///////////////////////
-function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $location) {
+////////////////////////////////Controller for the assignmentsList views///////////////////////
+function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $ionicHistory, $state) {
   this.$ionicSideMenuDelegate = $ionicSideMenuDelegate;
-  this.$location = $location;
   this.agentService = agentService;
+  //this.$ionicHistory = $ionicHistory;
+  this.$state = $state;
 
+  if (this.agentService.activeAssignment){
+    this.$state.go('assignmentsList');
+  }
+
+  /*if(!this.agentService.selectedAssignment){
+    console.log('this happened');
+    this.$ionicHistory.nextViewOptions({
+      disableBack: true
+    });
+  } else {
+    this.$ionicHistory.nextViewOptions({
+      disableBack: false
+    });
+  }*/
 }
 
 /**Shows or hides side menu */
@@ -93,7 +119,7 @@ AssignmentsCtrl.prototype.toggleDuty = function () {
  */
 AssignmentsCtrl.prototype.selectAssignment = function(assignment){
     this.agentService.selectedAssignment = assignment;
-    this.$location.path('/selectedAssignment');
+    this.$state.go('selectedAssignment');
 };
 
 /**
@@ -106,19 +132,19 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
   this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
     self.agentService.getAssignments();
     self.agentService.selectedAssignment = undefined;
-    self.$location.path('/activeAssignment')
+    self.$state.go('activeAssignment')
   })
 };
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////
-function LogInCtrl (agentService, $location, $window) {
-  this.$location = $location;
+function LogInCtrl (agentService, $window, $state) {
   this.agentService = agentService;
+  this.$state = $state;
 
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj']){
-    this.$location.path('/list');
+    this.$state.go('assignmentsList');
   }
 
   this.logInField = {
@@ -133,7 +159,8 @@ function LogInCtrl (agentService, $location, $window) {
 LogInCtrl.prototype.logIn = function () {
   var self = this;
   this.agentService.logIn(this.logInField).then(function(results){
-    self.$location.path('/list')
+    console.log('this got called too');
+    self.$state.go('assignmentsList');
   }, function(err){
     console.log('err at logInCtrl', err);
   });

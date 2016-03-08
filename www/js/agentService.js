@@ -5,10 +5,10 @@ angular.module('agentService',['ionic'])
 	.service('agentService', AgentService);
 
 //Service for logging in, getting assignments, updating, etc.
-function AgentService ($http, $q, $location, $interval, $window, $ionicLoading) {
+function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   this.$q = $q;
   this.$http = $http;
-  this.$location = $location;
+  this.$state = $state;
   this.$interval = $interval;
   this.$window = $window;
   this.$ionicLoading = $ionicLoading;
@@ -173,7 +173,7 @@ AgentService.prototype.checkForActive = function () {
 	  if(this.assignments[0].active){
       console.log('assignmentFromCheckForActive', this.assignments[0])
 	    this.activeAssignment = this.assignments[0];
-	    this.$location.path('/activeAssignment');
+	    this.$state.go('activeAssignment');
 	  }
 	}
 };

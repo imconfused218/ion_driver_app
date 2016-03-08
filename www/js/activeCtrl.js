@@ -16,12 +16,28 @@ angular.module('activeCtrl', ['ionic', 'agentService'])
 .controller('activeCtrl', ActiveCtrl);
 
 //Controller for a user's current assignment
-function ActiveCtrl (agentService, $location) {
+function ActiveCtrl (agentService, $state, $ionicHistory) {
 	this.agentService = agentService;
-	this.$location = $location;
+	this.$state = $state;
+	//this.$ionicHistory = $ionicHistory;
 
 	this.allEntriesBeGot = false;
 	this.assignmentReadyToFinish = false;
+
+	if(!this.agentService.activeAssignment){
+		$state.go('assignmentsList')
+	}
+
+	/*if (!this.agentService.selectedOrder){
+		console.log('called');
+		this.$ionicHistory.nextViewOptions({
+			disableBack: true
+		});
+	} else {
+		this.$ionicHistory.nextViewOptions({
+			disableBack: false
+		});
+	}*/
 }
 
 /**
@@ -45,7 +61,7 @@ ActiveCtrl.prototype.arriveAssignment = function () {
 };
 
 /**
-* Closes out the assignment and sends the user back to the assignmentList view
+* Closes out the assignment and sends the user back to the assignmentsList view
 */
 ActiveCtrl.prototype.completeAssignment = function () {
 	var self = this;
@@ -56,7 +72,7 @@ ActiveCtrl.prototype.completeAssignment = function () {
 		self.assignmentReadyToFinish = false;
 		self.agentService.activeAssignment = undefined;
 		self.agentService.orderGottenIds = [];
-		self.$location.path('/list');
+		self.$state.go('assignmentsList');
 	})
 };
 
@@ -66,7 +82,7 @@ ActiveCtrl.prototype.completeAssignment = function () {
 */
 ActiveCtrl.prototype.selectOrder = function (order) {
 	this.agentService.selectedOrder = order;
-	this.$location.path('/selectedOrder');
+	this.$state.go('selectedOrder');
 };
 
 /**
@@ -92,7 +108,7 @@ ActiveCtrl.prototype.orderBeGot = function () {
 	//this.agentService.selectedOrder['isGot'] = true;
 	this.checkAllTasksComplete();
 	this.agentService.selectedOrder = undefined;
-	this.$location.path('/activeAssignment');
+	this.$state.go('activeAssignment');
 };
 
 /**

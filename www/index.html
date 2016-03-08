@@ -177,7 +177,7 @@
                 </div>
               </ion-item>
             </div>
-            <ion-item>
+            <ion-item ng-class='{activeTask: activeCtrl.agentService.allTasksComplete}'>
               <div class='taskInfoDetails'>
                 <div class='taskPickup'>{{activeCtrl.agentService.activeAssignment.dropoff}}</div>
                 <div class='taskPlace'>{{activeCtrl.agentService.activeAssignment.destination}}</div>
