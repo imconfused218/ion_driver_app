@@ -40,7 +40,6 @@ ActiveCtrl.prototype.arriveAssignment = function () {
 	var emptyObj = {};
 	var self = this;
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'arrive/').then(function(results){
-		console.log('results arrive assignment', results);
 		self.assignmentReadyToFinish = true;
 	});
 };
@@ -52,7 +51,6 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	var self = this;
 	var emptyObj = {};
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'complete/').then(function(results){
-		console.log('results arrive assignment, results');
 		self.agentService.selectedOrder = undefined;
 		self.agentService.allTasksComplete = false;
 		self.assignmentReadyToFinish = false;
@@ -91,9 +89,9 @@ ActiveCtrl.prototype.orderSelected = function () {
  */
 ActiveCtrl.prototype.orderBeGot = function () {
 	this.agentService.orderGottenIds.push(this.agentService.selectedOrder.id)
-	this.agentService.selectedOrder['isGot'] = true;
-	this.agentService.selectedOrder = undefined;
+	//this.agentService.selectedOrder['isGot'] = true;
 	this.checkAllTasksComplete();
+	this.agentService.selectedOrder = undefined;
 	this.$location.path('/activeAssignment');
 };
 
@@ -103,11 +101,12 @@ ActiveCtrl.prototype.orderBeGot = function () {
  * @returns{Boolean}
  */
 ActiveCtrl.prototype.checkOrderBeGot = function (order) {
-		if(this.agentService.orderGottenIds.indexOf(order.id) < 0){
-			return false;
-		} else {
-			return true;
-		}
+	if(!order){return false;}
+	if(this.agentService.orderGottenIds.indexOf(order.id) < 0){
+		return false;
+	} else {
+		return true;
+	}
 
 };
 
@@ -117,20 +116,15 @@ ActiveCtrl.prototype.checkOrderBeGot = function (order) {
 ActiveCtrl.prototype.checkAllTasksComplete = function () {
 	var currentAssignment = this.agentService.activeAssignment;
 
-	console.log('current assignment', currentAssignment, 'allTasksComplete', this.agentService.allTasksComplete);
-
 	for (var i = 0; i < currentAssignment.tasks.length; i++){
 		var currentTask = currentAssignment.tasks[i];
-		console.log('currentTask', currentTask);
-		if (!currentTask.status == 'complete'){
-			console.log('this got called', currentTask.status);
+		if (!(currentTask.status === 'complete')){
 			for (var x=0; x < currentTask.orders.length; x++){
-				if(this.checkOrderBeGot(currentTask.orders[x])) {
+				if(!this.checkOrderBeGot(currentTask.orders[x])) {
 					return;
 				}
 			}
 			currentTask.status = "complete";
-			console.log('currentTask', currentTask.status);
 			this.taskComplete(currentTask.id);
 		}
 	}
