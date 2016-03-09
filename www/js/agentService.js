@@ -17,7 +17,7 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
 
-  this.onduty;
+  this.onduty = false;
 
   this.clusters = [];
 
@@ -58,6 +58,24 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
 }
 
 /**
+ * If an error or something goes wrong reset the app
+ */
+AgentService.prototype.resetApp = function () {
+  this.onduty = false;
+  this.clusters = [];
+  this.assignments = [];
+  this.selectedAssignment = undefined;
+  this.selectedOrder = undefined;
+  this.activeAssignment = undefined;
+  this.orderGottenIds = [];
+  this.allTasksComplete = false;
+  this.intervalCheck = undefined;
+  this.currentLocation = undefined;
+  this.timeStamp = '';
+  this.$state.go('assignmentsList')
+};
+
+/**
  * Passes user email and password to server
  * @param{object} logInInfo - An object wih user log-in information
  * @returns{Promise<Object>}
@@ -69,13 +87,13 @@ AgentService.prototype.logIn = function (logInInfo) {
   this.$ionicLoading.show(this.ionicLoadingConfig);
 
   return this.$http.post(this.hostUrl + logInUrl, logInInfo, this.configObj).then(function(results){
-    console.log('logIn Results', results);
     self.configObj.headers['Bearer'] = results.data.auth_token;
     self.$window.localStorage['configObj'] = JSON.stringify(self.configObj);
     self.$ionicLoading.hide();
     return results;
   },function(err){
     console.log('err at logInService', err);
+    self.$ionicLoading.hide();
     return self.$q.reject(err);
   });
 
@@ -95,6 +113,7 @@ AgentService.prototype.getAssignments = function () {
     return results;
   }, function(err){
     console.log('err at assignmentsService', err);
+    self.resetApp();
     return self.$q.reject(err);
   });
 };
@@ -108,12 +127,15 @@ AgentService.prototype.getStatus = function () {
   var self = this;
 
   return this.$http.get(this.rootUrl + 'status/', this.configObj).then(function(results){
-    console.log('get status results', results);
     self.clusters = results.data.groups;
     if(self.checkForOnDuty()){
       self.startIntervalCheck();
     }
     return results;
+  }, function(err){
+    console.log('err at getStatus', err);
+    self.resetApp();
+    return self.$q.reject(err);
   });
 };
 
@@ -123,8 +145,6 @@ AgentService.prototype.getStatus = function () {
 AgentService.prototype.resolveStatuses = function () {
   var statusArray= [];
   var self = this;
-
-  console.log('clusters', this.clusters);
 
   for (var i in this.clusters){
     statusArray.push(this.postStatus(this.clusters[i]));
@@ -148,19 +168,18 @@ AgentService.prototype.resolveStatuses = function () {
  */
 AgentService.prototype.postStatus = function (cluster) {
   var self = this;
-
-  console.log('cluster', cluster);
-
   var groupId = cluster.id;
-
   var on_duty = cluster.on_duty
-
   var emptyData = {};
 
   return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
     console.log('post status results', results);
     return results;
-  })
+  }, function(err){
+    console.log('err at postStatus', err);
+    self.resetApp();
+    return self.$q.reject(err);
+  });
 
 };
 
@@ -168,10 +187,8 @@ AgentService.prototype.postStatus = function (cluster) {
 * Checks to see if user currently has an active assignment
 */
 AgentService.prototype.checkForActive = function () {
-  console.log('checkForACtive', this.assignments);
 	if(angular.isDefined(this.assignments[0])){
 	  if(this.assignments[0].active){
-      console.log('assignmentFromCheckForActive', this.assignments[0])
 	    this.activeAssignment = this.assignments[0];
 	    this.$state.go('activeAssignment');
 	  }
@@ -224,7 +241,11 @@ AgentService.prototype.checkForChanges = function () {
 		if (result.data.refresh) {
 			self.getAssignments();
 		}
-	});
+	}, function(err){
+    console.log('err at checkForChanges', err);
+    self.resetApp();
+    return self.$q.reject(err);
+  });
 };
 
 /**
@@ -273,7 +294,12 @@ AgentService.prototype.assignmentAction = function (assignmentId, action) {
 		self.$ionicLoading.hide();
     console.log('assignment action', results);
 		return results;
-	});
+	}, function(err){
+    console.log('err at assignmentAction', err);
+    self.$ionicLoading.hide();
+    self.resetApp();
+    return self.$q.reject(err);
+  });
 };
 
 /**
@@ -290,6 +316,7 @@ AgentService.prototype.taskComplete = function (taskId) {
     return results;
   },function(err){
     console.log('err at taskComplete', err);
+    self.resetApp();
     return self.$q.reject(err);
   });
 };

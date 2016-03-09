@@ -169,7 +169,7 @@
               <ion-item class='orderRow' ng-repeat='order in task.orders' ng-click='activeCtrl.selectOrder(order)'>
                   <div class='orderDetails'>
                     <div class='orderName'>{{order.name}}</div>
-                    <div class='orderRoom'>Room: {{order.details}}</div>
+                    <div ng-class='{activeTask: activeCtrl.checkOrderBeGot(order)}' class='orderRoom'>Room: {{order.details}}</div>
                     <div class='orderNumber'>Order Number: {{order.id}}</div>
                   </div>
                 <div class='chevronButton'>

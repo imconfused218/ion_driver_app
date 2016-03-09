@@ -22,6 +22,7 @@ function ActiveCtrl (agentService, $state, $ionicHistory) {
 	//this.$ionicHistory = $ionicHistory;
 
 	this.allEntriesBeGot = false;
+	this.allEntriesChecked();
 	this.assignmentReadyToFinish = false;
 
 	if(!this.agentService.activeAssignment){
@@ -67,12 +68,9 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	var self = this;
 	var emptyObj = {};
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'complete/').then(function(results){
-		self.agentService.selectedOrder = undefined;
-		self.agentService.allTasksComplete = false;
 		self.assignmentReadyToFinish = false;
-		self.agentService.activeAssignment = undefined;
-		self.agentService.orderGottenIds = [];
-		self.$state.go('assignmentsList');
+		self.allEntriesBeGot = false;
+		self.agentService.resetApp();
 	})
 };
 
@@ -160,6 +158,10 @@ ActiveCtrl.prototype.entryToggleCheck = function (entry) {
 * Checks to see if all entries have been checked
 */
 ActiveCtrl.prototype.allEntriesChecked = function () {
+	if(!(angular.isDefined(this.agentService.selectedOrder))){
+		this.agentService.resetApp();
+		return;
+	}
 	for(var i in this.agentService.selectedOrder.entries) {
 		var entry = this.agentService.selectedOrder.entries[i];
 		if (!entry.checked) {
