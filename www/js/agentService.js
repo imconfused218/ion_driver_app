@@ -230,6 +230,8 @@ AgentService.prototype.checkForChanges = function () {
 		update: this.timeStamp
 	};
 
+  updateObj.device_token = JSON.parse(this.$window.localStorage.getItem("ionic_io_push_token")).token;
+
   if (this.currentLocation){
     updateObj['lat'] = this.currentLocation.coords.latitude;
     updateObj['lng'] = this.currentLocation.coords.longitude;

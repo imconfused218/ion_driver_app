@@ -67,6 +67,7 @@
             </ion-nav-buttons>
             
             <ion-content class='contentContainer'>
+              <ion-refresher on-refresh='assignmentsCtrl.refreshList()'></ion-refresher>
               <div class='offDutyCover' ng-show='!assignmentsCtrl.agentService.onDuty'>You are currently offline</div>
               <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
               <ion-list >
@@ -199,11 +200,14 @@
           <div class='orderInfoRow'>
             <div class='orderInfoContainer'>
               <div class='order-name'>Order for {{activeCtrl.agentService.selectedOrder.name}}</div>
-              <div class='order-delivery-location'>{{activeCtrl.agentService.selectedOrder.details}}</div>
-              <div class='order-item-count'> - {{activeCtrl.agentService.selectedOrder.item_count}} Item(s)</div>
+              <div class='subOrderInfoContainer'>
+                <div class='order-delivery-location'>{{activeCtrl.agentService.selectedOrder.details}}</div>
+                <div class='order-item-count'> - {{activeCtrl.agentService.selectedOrder.item_count}} Item(s)</div>
+              </div>
             </div>
             <a class='phoneButton ion-ios-telephone' ng-href="tel: {{activeCtrl.agentService.selectedOrder.phone_number}}"></a>
           </div>
+          <div class='clear'></div>
           <ion-list>
             <ion-item ng-repeat='entry in activeCtrl.agentService.selectedOrder.entries' ng-click='activeCtrl.entryToggleCheck(entry)' ng-class='{checked: entry.checked}'>
               <div class='entryRow'>

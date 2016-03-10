@@ -1,5 +1,4 @@
 
-
 //Main module that everything is based off of
 angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentService'])
 
@@ -80,8 +79,10 @@ angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentSe
 
 
 ////////////////////////////////Controller for the assignmentsList views///////////////////////
-function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $ionicHistory, $state) {
+function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $ionicHistory, $state, $ionicListDelegate, $scope) {
+  this.$ionicListDelegate = $ionicListDelegate;
   this.$ionicSideMenuDelegate = $ionicSideMenuDelegate;
+  this.$scope = $scope;
   this.agentService = agentService;
   //this.$ionicHistory = $ionicHistory;
   this.$state = $state;
@@ -132,8 +133,15 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
   this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
     self.agentService.getAssignments();
     self.agentService.selectedAssignment = undefined;
+    self.$ionicListDelegate.closeOptionButtons()
     self.$state.go('activeAssignment')
   })
+};
+
+AssignmentsCtrl.prototype.refreshList = function () {
+  this.agentService.getAssignments();
+  this.$scope.$broadcast('scroll.refreshComplete');
+  this.$scope.$apply();
 };
 
 
@@ -148,8 +156,8 @@ function LogInCtrl (agentService, $window, $state) {
   }
 
   this.logInField = {
-    email : 'matt@menu.me',
-    password: 'handsoff9'
+    email : '',
+    password: ''
   }
 }
 

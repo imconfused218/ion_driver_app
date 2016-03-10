@@ -1,3 +1,21 @@
+@font-face {
+	font-family: 'Open Sans';
+	src:url('../fonts/OpenSans-Regular.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'mulisemibold';
+	src: url('../fonts/Muli-SemiBold.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.clear {
+	clear: both;
+}
+
 
 .contentContainer {
 	background-color: #F7F7F7;
@@ -6,7 +24,7 @@
 .buttonContainer{
 	width: 85%;
 	margin: auto;
-	font-family: "Open Sans",sans-serif;
+	font-family: "Open Sans", sans-serif;
 }
 
 /*--------------------Log In View--------------*/
@@ -257,23 +275,22 @@
 /************************Selected Order View*****************/
 
 .orderInfoRow {
+	padding: 0.5em 0em;
 	display: flex;
 	justify-content: space-between;
-	padding: 0.5em 0em;
 }
 
 
 .orderInfoContainer {
-	display: flex;
-	justify-content: left;
-	flex-wrap: wrap;
 	font-size: 19px;
-
-	margin-top: 0.5em;
 }
 
 .orderInfoContainer div {
 	padding-left: 8px;
+}
+
+.subOrderInfoContainer{
+	display: flex;
 }
 
 .orderInfoRow a {
@@ -323,7 +340,7 @@
 }
 
 .entryName {
-	font-family: "mulisemibold";
+	font-family: "mulisemibold", 'Open Sans', sans-serif;
 	font-size: 14px;
 	color: rgba(0, 0, 0, 0.85);
 	margin-left: -10px;
@@ -350,7 +367,7 @@
 }
 
 .phoneButton {
-	font-size: 27px;
+	font-size: 32px;
 }
 
 
