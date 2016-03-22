@@ -7,14 +7,13 @@
   <author email="team@eatsterling.com" href="eatsterling.com">
       The Eat Sterling Team!
     </author>
-
-  <content src="http://10.0.2.15:8100" original-src="index.html"/>
+  <content src="index.html"/>
   <access origin="*"/>
   <access origin="mailto:*" launch-external="yes"/>
   <access origin="geo:*" launch-external="yes"/>
   <access origin="maps:*" launch-external="yes"/>
   <allow-navigation href="tel:*"/>
-  <allow-navigation href="http://*/*" />
+  <allow-navigation href="http://*/*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
