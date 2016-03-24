@@ -12,8 +12,7 @@
   <access origin="mailto:*" launch-external="yes"/>
   <access origin="geo:*" launch-external="yes"/>
   <access origin="maps:*" launch-external="yes"/>
-  <allow-navigation href="tel:*"/>
-  <allow-navigation href="http://*/*"/>
+  <allow-navigation href="*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>

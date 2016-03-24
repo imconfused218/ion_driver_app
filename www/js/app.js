@@ -14,7 +14,7 @@ angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentSe
     });
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
+    if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
     if(window.StatusBar) {
@@ -170,6 +170,9 @@ LogInCtrl.prototype.logIn = function () {
     console.log('this got called too');
     self.$state.go('assignmentsList');
   }, function(err){
+    for (var i in err){
+      alert(err[i]);
+    }
     console.log('err at logInCtrl', err);
   });
 };
