@@ -167,12 +167,8 @@ function LogInCtrl (agentService, $window, $state) {
 LogInCtrl.prototype.logIn = function () {
   var self = this;
   this.agentService.logIn(this.logInField).then(function(results){
-    console.log('this got called too');
     self.$state.go('assignmentsList');
   }, function(err){
-    for (var i in err){
-      alert(err[i]);
-    }
     console.log('err at logInCtrl', err);
   });
 };
