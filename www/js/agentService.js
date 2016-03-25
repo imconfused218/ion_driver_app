@@ -86,6 +86,13 @@ AgentService.prototype.logIn = function (logInInfo) {
 
   this.$ionicLoading.show(this.ionicLoadingConfig);
 
+  alert('url');
+  alert(this.hostUrl +logInUrl);
+  alert('logInINfo');
+  alert(logInInfo);
+  alert('configObj');
+  alert(this.configObj);
+
   return this.$http.post(this.hostUrl + logInUrl, logInInfo, this.configObj).then(function(results){
     self.configObj.headers['Bearer'] = results.data.auth_token;
     self.$window.localStorage['configObj'] = JSON.stringify(self.configObj);
@@ -230,7 +237,7 @@ AgentService.prototype.checkForChanges = function () {
 		update: this.timeStamp
 	};
 
-  updateObj.device_token = JSON.parse(this.$window.localStorage.getItem("ionic_io_push_token")).token;
+  updateObj.device_token = this.$window.localStorage.getItem("ionic_io_push_token") ? JSON.parse(this.$window.localStorage.getItem("ionic_io_push_token")).token : "";
 
   if (this.currentLocation){
     updateObj['lat'] = this.currentLocation.coords.latitude;
