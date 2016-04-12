@@ -4,6 +4,8 @@ angular.module('activeCtrl', ['ionic', 'agentService'])
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
+
+  	//error on android device "Cannot read property Keyboard of undefined"
     if(window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
