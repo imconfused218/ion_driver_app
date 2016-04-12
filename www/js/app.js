@@ -1,6 +1,6 @@
 
 //Main module that everything is based off of
-angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentService'])
+angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentService', 'runnerCtrl'])
 
 .run(function($ionicPlatform, $ionicHistory) {
   $ionicPlatform.ready(function() {
@@ -48,8 +48,11 @@ angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentSe
           agentService.configObj = JSON.parse($window.localStorage.getItem('configObj'));
           return agentService.getStatus();
         },
-        getInitialAssignments: function(agentService){
+        getInitialAssignments: function(agentService) {
           return agentService.getAssignments();
+        },
+        getInitialRunnerAssignments: function(agentService) {
+          return agentService.getRunnerAssignments();
         }
       }
     })
@@ -72,6 +75,16 @@ angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentSe
       url: '/selectedAssignment',
       controller: 'assignmentsListController as assignmentsCtrl',
       templateUrl: 'selectedAssignment.html'
+    })
+    .state('selectedRunnerAssignment', {
+      url: '/selectedRunnerAssignment',
+      controller: 'assignmentsListController as assignmentsCtrl',
+      templateUrl: 'selectedRunnerAssignment.html'
+    })
+    .state('activeRunnerAssignment', {
+      url: '/activeRunnerAssignment',
+      controller: 'runnerCtrl as runnerCtrl',
+      templateUrl: 'activeRunnerAssignment.html'
     });
   $urlRouterProvider.otherwise('/logIn');
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(geo|mailto|tel|maps):/);
@@ -120,7 +133,11 @@ AssignmentsCtrl.prototype.toggleDuty = function () {
  */
 AssignmentsCtrl.prototype.selectAssignment = function (assignment) {
     this.agentService.selectedAssignment = assignment;
-    this.$state.go('selectedAssignment');
+    if (assignment.runner){
+      this.$state.go('selectedRunnerAssignment');
+    } else {
+      this.$state.go('selectedAssignment');
+    } 
 };
 
 /**
@@ -128,14 +145,23 @@ AssignmentsCtrl.prototype.selectAssignment = function (assignment) {
  */
 AssignmentsCtrl.prototype.acceptAssignment = function () {
   var self = this;
-  var assignmentId = this.agentService.selectedAssignment.id;
 
-  this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
-    self.agentService.getAssignments();
-    self.agentService.selectedAssignment = undefined;
-    self.$ionicListDelegate.closeOptionButtons()
-    self.$state.go('activeAssignment')
-  })
+  if (this.agentService.selectedAssignment.runner) {
+    this.agentService.acceptRunnerAssignment();
+    this.agentService.selectAssignment = undefined;
+    this.$ionicListDelegate.closeOptionButtons();
+    this.$state.go('activeRunnerAssignment');
+  } else {
+    var assignmentId = this.agentService.selectedAssignment.id;
+
+    this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
+      self.agentService.getAssignments();
+      self.agentService.selectedAssignment = undefined;
+      self.$ionicListDelegate.closeOptionButtons();
+      self.$state.go('activeAssignment');
+    });
+  }
+  
 };
 
 AssignmentsCtrl.prototype.refreshList = function () {
@@ -158,7 +184,7 @@ function LogInCtrl (agentService, $window, $state) {
   this.logInField = {
     email : '',
     password: ''
-  }
+  };
 }
 
 /**

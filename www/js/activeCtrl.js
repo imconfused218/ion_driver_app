@@ -1,7 +1,4 @@
 angular.module('activeCtrl', ['ionic', 'agentService'])
-<<<<<<< HEAD
-=======
->>>>>>> 86f9d6144d9b9720b47970c5849d032551b12aac
 .controller('activeCtrl', ActiveCtrl);
 
 //Controller for a user's current assignment

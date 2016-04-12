@@ -19,13 +19,16 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
 
   //Only for Testing, delete before building
   this.testRunnerData = [{
-    pickUp : '3:00pm',
-    dropOff: '4:00pm',
+    status: 'Runner Needed!',
+    pickup : '3:00pm',
+    runner: true,
+    dropoff: '4:00pm',
     restaurant: 'Three Restaurant',
     customer: 'matt',
     room: 123,
     agent: 'postmates',
     id: 111,
+    alarm: false,
     link: 'urllink'
   }];
 
@@ -254,6 +257,7 @@ AgentService.prototype.checkForChanges = function () {
 		self.timeStamp = result.data.update;
 		if (result.data.refresh) {
 			self.getAssignments();
+      self.getRunnerAssignments();
 		}
 	}, function(err){
     console.log('err at checkForChanges', err);
@@ -342,6 +346,11 @@ AgentService.prototype.taskComplete = function (taskId) {
 AgentService.prototype.getRunnerAssignments = function () {
   console.log('getRunnerAssignments');
   return this.testRunnerData;
+};
+
+AgentService.prototype.acceptRunnerAssignment = function () {
+  console.log('AcceptedRunnerAssignment!');
+  return;
 };
 
 AgentService.prototype.completeRunnerAssignment = function () {

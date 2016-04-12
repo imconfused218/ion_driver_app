@@ -11,7 +11,6 @@ function RunnerCtrl (agentService, $state) {
 
 RunnerCtrl.prototype.completeAssignment = function () {
 	var self = this;
-	this.agentService.completeRunnerAssignment().then(function(result){
-		self.$state.go('assignmentsList');
-	})
+	this.agentService.completeRunnerAssignment();
+	this.agentService.resetApp();
 };

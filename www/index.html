@@ -75,10 +75,10 @@
             <ion-content class='contentContainer'>
               <ion-refresher on-refresh='assignmentsCtrl.refreshList()'></ion-refresher>
               <div class='offDutyCover' ng-show='!assignmentsCtrl.agentService.onDuty'>You are currently offline</div>
-              <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
+              <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && !assignmentsCtrl.agentService.testRunnerData.length && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
               <ion-list >
                 <div class='spacing'></div>
-                <ion-item  ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>
+                <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>
                   <div class='assignmentRowInfo'>
                     <div class='dropOff'><span class='ion-pizza'></span>  {{assignment.dropoff}} Drop OFF</div>
                     <div class='assignment-task-info'>{{assignment.tasks.length}} Task(s) - {{assignment.tasks[0].place}}</div>
@@ -89,6 +89,15 @@
                     </div>
                     <i class='icon ion-chevron-right'></i>
                   </div>
+                </ion-item>
+                <ion-item ng-repeat='runnerAssignment in assignmentsCtrl.agentService.testRunnerData' ng-click='assignmentsCtrl.selectAssignment(runnerAssignment)' class='assignmentRow'>
+                <div class='assignmentRowInfo'>
+                  <div class='dropOff'><span class='ion-ios-body'></span> Status: {{runnerAssignment.status}}</div>
+                  <div class='assignment-task-info'>{{runnerAssignment.dropoff}} Drop OFF</div>
+                </div>
+                <div class='chevronButton'>
+                  <i class='icon ion-chevron-right'></i>
+                </div>
                 </ion-item>
               </ion-list>
             </ion-content>
@@ -121,6 +130,37 @@
             <ion-item >
               <div class='buttonContainer button button-block button-dark icon-right ion-chevron-left'>Swipe left to Accept
                 <ion-option-button class='button button-block button-calm icon ion-checkmark-round' ng-click='assignmentsCtrl.acceptAssignment()'></ion-option-button>
+              </div>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-view>
+    </script>
+
+     <script id="selectedRunnerAssignment.html" type="text/ng-template">
+      <ion-view view-title='Assignment Details'>
+        <ion-content>
+          <ion-list>
+            <ion-item class='currentAssignmentSubheader'>
+              <div class='currentDropOffTime'>{{assignmentsCtrl.agentService.selectedAssignment.dropoff}} DROPOFF</div>
+              <div class='currentDestination'>{{assignmentsCtrl.agentService.selectedAssignment.destination}}</div>
+            </ion-item>
+            <ion-item class='taskInfoRow greyBackground'>
+              <div class='taskInfoDetails'>
+                <div class='taskPickup'>{{assignmentsCtrl.agentService.selectedAssignment.restaurant}}</div>
+                <div class='taskPlace'>Status: {{assignmentsCtrl.agentService.selectedAssignment.status}}</div>
+              </div>
+            </ion-item>
+            <!--<ion-item class='greyBackground'>
+              <div class='taskInfoDetails'>
+                <div class='taskPickup'>{{assignmentsCtrl.agentService.selectedAssignment.dropoff}}</div>
+                <div class='taskPlace'>{{assignmentsCtrl.agentService.selectedAssignment.destination}}</div>
+                <div class='taskAddress'>{{assignmentsCtrl.agentService.selectedAssignment.destination_address}}</div>
+              </div>
+            </ion-item>-->
+            <ion-item ng-show='assignmentsCtrl.agentService.selectedAssignment.status == "Runner Needed!"'>
+              <div class='buttonContainer button button-block button-dark icon-right ion-chevron-left'>Swipe left to Accept
+                <ion-option-button class='button button-block button-calm icon ion-checkmark-round'  ng-click='assignmentsCtrl.acceptAssignment()'></ion-option-button>
               </div>
             </ion-item>
           </ion-list>
@@ -236,11 +276,28 @@
       </ion-view>
     </script>
 
-    <script id='selectedRunnerAssignment.html' type='text/ng-template'>
-      <ion-view view-title='Assignment Details'>
+    <script id='activeRunnerAssignment.html' type='text/ng-template'>
+      <ion-view view-title='Assignment Details' hide-back-button = 'true'>
+        <ion-header-bar class='bar-stable'>
+        </ion-header-bar>
         <ion-content>
-          <div>
-            
+          <ion-list>
+            <ion-item class='currentAssignmentSubheader'>
+              <div class='currentDropOffTime'>{{runnerCtrl.activeRunnerAssignment.dropoff}} DROPOFF</div>
+              <div class='currentDestination'>{{runnerCtrl.activeRunnerAssignment.restaurant}}</div>
+            </ion-item>
+            <ion-item class='taskInfoRow'>
+              <div class='taskInfoDetails'>
+                <div class='taskPlace'>Customer: {{runnerCtrl.activeRunnerAssignment.customer}}</div>
+                <div class='taskPlace'>Room: {{runnerCtrl.activeRunnerAssignment.room}}</div>
+              </div>
+              <div class='chevronButton'>
+                <i class='ionic ion-chevron-right'></i>
+              </div>
+            </ion-item>
+          </ion-list>
+          <div class='buttonContainer'>
+             <button class='button button-block button-balanced' ng-click='runnerCtrl.completeAssignment()'>Complete Assignment</button>
           </div>
         </ion-content>
       </ion-view>
