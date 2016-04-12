@@ -12,8 +12,8 @@
   <access origin="mailto:*" launch-external="yes"/>
   <access origin="geo:*" launch-external="yes"/>
   <access origin="maps:*" launch-external="yes"/>
-  <allow-navigation href="tel:*"/>
-  <allow-navigation href="http://*/*"/>
+  <allow-navigation href="*"/>
+  <allow-intent href="https://*/*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
@@ -24,6 +24,8 @@
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
+  <hook type="after_prepare" src="package-hooks/add_platform_class.js" />
+  <hook type="after_prepare" src="package-hooks/ios9_allow_http.sh" />
   <platform name="android">
     <icon src="resources/android/icon/drawable-ldpi-icon.png" density="ldpi"/>
     <icon src="resources/android/icon/drawable-mdpi-icon.png" density="mdpi"/>

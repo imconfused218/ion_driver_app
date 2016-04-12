@@ -3,8 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src &apos;self&apos; &apos;unsafe-inline&apos;; script-src &apos;self&apos; &apos;unsafe-inline&apos; &apos;unsafe-eval&apos;">
+
+    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src &apos;self&apos; &apos;unsafe-inline&apos;; script-src &apos;self&apos; &apos;unsafe-inline&apos; &apos;unsafe-eval&apos;">
+
     <title>Driver App</title>
+
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src &apos;self&apos; yourhost.com ws://localhost:35729 data: gap: https://ssl.gstatic.com; style-src &apos;self&apos; &apos;unsafe-inline&apos;; media-src *;script-src &apos;self&apos; localhost:35729 &apos;unsafe-eval&apos; &apos;unsafe-inline&apos;">-->
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
@@ -25,6 +29,7 @@
     <script src="js/app.js"></script>
     <script src="js/activeCtrl.js"></script>
     <script src="js/agentService.js"></script>
+    <script src='js/runnerCtrl.js'></script>
   </head>
   <body ng-app="starter">
 
@@ -226,6 +231,16 @@
           </ion-list>
           <div class='buttonContainer' ng-show='!activeCtrl.checkOrderBeGot(activeCtrl.agentService.selectedOrder) && activeCtrl.allEntriesBeGot'>
             <button class='button button-block button-calm' ng-click='activeCtrl.orderBeGot()'>Got it!</button>
+          </div>
+        </ion-content>
+      </ion-view>
+    </script>
+
+    <script id='selectedRunnerAssignment.html' type='text/ng-template'>
+      <ion-view view-title='Assignment Details'>
+        <ion-content>
+          <div>
+            
           </div>
         </ion-content>
       </ion-view>

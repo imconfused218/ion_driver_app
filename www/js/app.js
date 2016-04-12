@@ -14,7 +14,7 @@ angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentSe
     });
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
+    if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
     if(window.StatusBar) {
@@ -53,12 +53,12 @@ angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentSe
         }
       }
     })
-    .state('logIn',{
+    .state('logIn', {
       url: '/logIn',
       controller: 'logInCtrl as logInCtrl',
       templateUrl: 'logIn.html'
     })
-    .state('activeAssignment',{
+    .state('activeAssignment', {
       url: '/activeAssignment',
       controller: 'activeCtrl as activeCtrl',
       templateUrl: 'activeAssignment.html'
@@ -118,7 +118,7 @@ AssignmentsCtrl.prototype.toggleDuty = function () {
  * When a user clicks on an assignment for more details the view changes
  * @param{Object} assignment - An assignment for a driver
  */
-AssignmentsCtrl.prototype.selectAssignment = function(assignment){
+AssignmentsCtrl.prototype.selectAssignment = function (assignment) {
     this.agentService.selectedAssignment = assignment;
     this.$state.go('selectedAssignment');
 };
@@ -167,7 +167,6 @@ function LogInCtrl (agentService, $window, $state) {
 LogInCtrl.prototype.logIn = function () {
   var self = this;
   this.agentService.logIn(this.logInField).then(function(results){
-    console.log('this got called too');
     self.$state.go('assignmentsList');
   }, function(err){
     console.log('err at logInCtrl', err);
