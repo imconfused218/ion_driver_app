@@ -15,17 +15,7 @@
     "shelljs": "^0.3.0"
   },
   "cordovaPlugins": [
-    {
-      "id": "phonegap-plugin-push",
-      "locator": "phonegap-plugin-push",
-      "variables": {
-        "SENDER_ID": "180626893915"
-      }
-    },
-    {
-      "locator": "https://github.com/apache/cordova-plugin-whitelist.git",
-      "id": "cordova-plugin-whitelist"
-    }
+    "cordova-plugin-whitelist"
   ],
   "cordovaPlatforms": [
     "android",

@@ -19,7 +19,8 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
-    <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
+<script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
+    
 
     <!-- cordova script (this will be a 404 during development) -->
     <!-- Cordova is bootstrapped by ionic-platform-web-client, uncomment this if you remove ionic-platform-web-client... -->
@@ -29,7 +30,7 @@
     <script src="js/app.js"></script>
     <script src="js/activeCtrl.js"></script>
     <script src="js/agentService.js"></script>
-    <script src='js/runnerCtrl.js'></script>
+    <script src="js/runnerCtrl.js"></script>
   </head>
   <body ng-app="starter">
 
@@ -80,7 +81,7 @@
                 <div class='spacing'></div>
                 <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>
                   <div class='assignmentRowInfo'>
-                    <div class='dropOff'><span class='ion-pizza'></span>  {{assignment.dropoff}} Drop OFF</div>
+                    <div class='dropOff'><span style='padding-right: 0.1em' class='ion-android-car'></span>  {{assignment.dropoff}} Drop OFF</div>
                     <div class='assignment-task-info'>{{assignment.tasks.length}} Task(s) - {{assignment.tasks[0].place}}</div>
                   </div>
                   <div class='chevronButton'>
@@ -90,9 +91,9 @@
                     <i class='icon ion-chevron-right'></i>
                   </div>
                 </ion-item>
-                <ion-item ng-repeat='runnerAssignment in assignmentsCtrl.agentService.testRunnerData' ng-click='assignmentsCtrl.selectAssignment(runnerAssignment)' class='assignmentRow'>
+                <ion-item ng-class='{runnerNeeded: runnerAssignment.status == "Runner Needed!"}' ng-repeat='runnerAssignment in assignmentsCtrl.agentService.testRunnerData' ng-click='assignmentsCtrl.selectAssignment(runnerAssignment)' class='assignmentRow'>
                 <div class='assignmentRowInfo'>
-                  <div class='dropOff'><span class='ion-ios-body'></span> Status: {{runnerAssignment.status}}</div>
+                  <div class='dropOff'><span style='padding-right: 0.1em' class='ion-ios-body'></span> Status: {{runnerAssignment.status}}</div>
                   <div class='assignment-task-info'>{{runnerAssignment.dropoff}} Drop OFF</div>
                 </div>
                 <div class='chevronButton'>
@@ -145,7 +146,7 @@
               <div class='currentDropOffTime'>{{assignmentsCtrl.agentService.selectedAssignment.dropoff}} DROPOFF</div>
               <div class='currentDestination'>{{assignmentsCtrl.agentService.selectedAssignment.destination}}</div>
             </ion-item>
-            <ion-item class='taskInfoRow greyBackground'>
+            <ion-item class='taskInfoRow greyBackground' ng-class='{runnerNeeded: assignmentsCtrl.agentService.selectedAssignment.status == "Runner Needed!"}'>
               <div class='taskInfoDetails'>
                 <div class='taskPickup'>{{assignmentsCtrl.agentService.selectedAssignment.restaurant}}</div>
                 <div class='taskPlace'>Status: {{assignmentsCtrl.agentService.selectedAssignment.status}}</div>
@@ -259,7 +260,7 @@
               <div class='entryRow'>
                 <div class='entryContainer'>
                   <div class='entryIcon'><img ng-src='http:{{entry.icon}}'></div>
-                   x<div>{{entry.quant}}</div>
+                   x<div class='entryQuant'>{{entry.quant}}</div>
                   <div class='entryName'>
                     {{entry.name}}
                     <div class='entryNotes' ng-repeat='note in entry.notes'>{{note}}</div>
@@ -276,7 +277,7 @@
       </ion-view>
     </script>
 
-    <script id='activeRunnerAssignment.html' type='text/ng-template'>
+    <script id="activeRunnerAssignment.html" type="text/ng-template">
       <ion-view view-title='Assignment Details' hide-back-button = 'true'>
         <ion-header-bar class='bar-stable'>
         </ion-header-bar>

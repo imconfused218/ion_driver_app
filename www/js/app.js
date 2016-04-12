@@ -1,6 +1,6 @@
 
 //Main module that everything is based off of
-angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentService', 'runnerCtrl'])
+angular.module('starter', ['ionic','ionic.service.core',  'activeCtrl', 'agentService', 'runnerCtrl'])
 
 .run(function($ionicPlatform, $ionicHistory) {
   $ionicPlatform.ready(function() {

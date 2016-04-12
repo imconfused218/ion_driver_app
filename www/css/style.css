@@ -143,6 +143,22 @@
 	padding-left: 0.25em;
 }
 
+.runnerNeeded {
+	background-color: hsla(356, 59%, 63%, 1);
+	color: #333;
+}
+
+.runnerNeeded .assignment-task-info {
+	color: #333;
+}
+
+/************************Selected Runner Assignment View ********/
+
+.runnerNeeded.taskInfoRow {
+	background-color: hsla(356, 59%, 63%, 1);
+	color: #333;
+}
+
 
 /*************************Current Assignment View***********/
 
@@ -344,7 +360,6 @@
 	font-size: 14px;
 	color: rgba(0, 0, 0, 0.85);
 	margin-left: -10px;
-
 }
 
 .entryNotes {

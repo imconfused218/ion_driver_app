@@ -21,6 +21,7 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   this.testRunnerData = [{
     status: 'Runner Needed!',
     pickup : '3:00pm',
+    active: false,
     runner: true,
     dropoff: '4:00pm',
     restaurant: 'Three Restaurant',
@@ -29,7 +30,8 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
     agent: 'postmates',
     id: 111,
     alarm: false,
-    link: 'urllink'
+    link: 'urllink',
+    phone: 555555555555
   }];
 
   this.onduty = false;
