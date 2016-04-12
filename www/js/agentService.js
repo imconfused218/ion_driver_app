@@ -17,6 +17,18 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
 
+  //Only for Testing, delete before building
+  this.testRunnerData = [{
+    pickUp : '3:00pm',
+    dropOff: '4:00pm',
+    restaurant: 'Three Restaurant',
+    customer: 'matt',
+    room: 123,
+    agent: 'postmates',
+    id: 111,
+    link: 'urllink'
+  }];
+
   this.onduty = false;
 
   this.clusters = [];
@@ -324,3 +336,15 @@ AgentService.prototype.taskComplete = function (taskId) {
 };
 
 
+////////////////////////////////////// Runnner Stuff /////////////////////////////
+
+
+AgentService.prototype.getRunnerAssignments = function () {
+  console.log('getRunnerAssignments');
+  return this.testRunnerData;
+};
+
+AgentService.prototype.completeRunnerAssignment = function () {
+  console.log('completeRunnerAssignment!');
+  return;
+};

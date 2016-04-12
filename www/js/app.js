@@ -53,12 +53,12 @@ angular.module('starter', ['ionic', 'ionic.service.core', 'activeCtrl', 'agentSe
         }
       }
     })
-    .state('logIn',{
+    .state('logIn', {
       url: '/logIn',
       controller: 'logInCtrl as logInCtrl',
       templateUrl: 'logIn.html'
     })
-    .state('activeAssignment',{
+    .state('activeAssignment', {
       url: '/activeAssignment',
       controller: 'activeCtrl as activeCtrl',
       templateUrl: 'activeAssignment.html'
@@ -118,7 +118,7 @@ AssignmentsCtrl.prototype.toggleDuty = function () {
  * When a user clicks on an assignment for more details the view changes
  * @param{Object} assignment - An assignment for a driver
  */
-AssignmentsCtrl.prototype.selectAssignment = function(assignment){
+AssignmentsCtrl.prototype.selectAssignment = function (assignment) {
     this.agentService.selectedAssignment = assignment;
     this.$state.go('selectedAssignment');
 };
