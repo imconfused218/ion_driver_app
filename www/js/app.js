@@ -172,9 +172,18 @@ AssignmentsCtrl.prototype.refreshList = function () {
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////
-function LogInCtrl (agentService, $window, $state) {
+function LogInCtrl (agentService, $window, $state, $loading, $ionicPlatform) {
   this.agentService = agentService;
   this.$state = $state;
+  this.$loading = $loading;
+  this.$ioicPlatform = $ionicPlatform;
+
+
+   this.deploy = new Ionic.Deploy();
+
+   this.deploy.check().then(function(hasUpdate) {
+
+   })
 
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj']){
@@ -185,7 +194,10 @@ function LogInCtrl (agentService, $window, $state) {
     email : '',
     password: ''
   };
+
+
 }
+
 
 /**
  * Passes email and password to server
@@ -196,5 +208,18 @@ LogInCtrl.prototype.logIn = function () {
     self.$state.go('assignmentsList');
   }, function(err){
     console.log('err at logInCtrl', err);
+  });
+};
+
+
+LogInCtrl.prototype.getUpdate = function () {
+  var self = this;
+  this.$loading.show({
+    template: "Updating.."
+  });
+  this.deploy.update().then(function(res) {
+    self.$loading.hide();
+  }, function (err){
+    self.$loading.hide();
   });
 };
