@@ -172,18 +172,37 @@ AssignmentsCtrl.prototype.refreshList = function () {
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////
-function LogInCtrl (agentService, $window, $state, $loading, $ionicPlatform) {
+function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform) {
   this.agentService = agentService;
   this.$state = $state;
-  this.$loading = $loading;
+  this.$ionicLoading = $ionicLoading;
   this.$ioicPlatform = $ionicPlatform;
+  var self = this;
 
 
-   this.deploy = new Ionic.Deploy();
+  this.deploy = new Ionic.Deploy();
 
-   this.deploy.check().then(function(hasUpdate) {
-
-   })
+  this.deploy.check().then(function(hasUpdate) {
+    
+    if (hasUpdate) {
+      self.$ionicLoading.show({
+        template: "Updating.."
+      });
+      self.deploy.update().then(function(deployResult) {
+        self.$ionicLoading.hide()
+      }, function(deployUpdateError) {
+        self.$ionicLoading.hide()
+        // fired if we're unable to check for updates or if any 
+        // errors have occured.
+      }, function(deployProgress) {
+        self.$ionicLoading.hide()
+        // this is a progress callback, so it will be called a lot
+        // deployProgress will be an Integer representing the current
+        // completion percentage.
+      });
+    }
+    
+  })
 
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj']){
