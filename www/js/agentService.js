@@ -17,22 +17,7 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
 
-  //Only for Testing, delete before building
-  this.testRunnerData = [{
-    status: 'Runner Needed!',
-    pickup : '3:00pm',
-    active: false,
-    runner: true,
-    dropoff: '4:00pm',
-    restaurant: 'Three Restaurant',
-    customer: 'matt',
-    room: 123,
-    agent: 'postmates',
-    id: 111,
-    alarm: false,
-    link: 'urllink',
-    phone: 555555555555
-  }];
+  this.runnerAssignments = [];
 
   this.onduty = false;
 
@@ -81,6 +66,7 @@ AgentService.prototype.resetApp = function () {
   this.onduty = false;
   this.clusters = [];
   this.assignments = [];
+  this.runnerAssignments = [];
   this.selectedAssignment = undefined;
   this.selectedOrder = undefined;
   this.activeAssignment = undefined;
@@ -123,12 +109,12 @@ AgentService.prototype.logIn = function (logInInfo) {
 AgentService.prototype.getAssignments = function () {
   var self = this;
 
-  return this.$http.get(this.rootUrl + 'tasks/', this.configObj).then(function(results){
-    console.log('assignments Results', results);
+  return this.$http.get(this.rootUrl + 'tasks/', this.configObj).then(function(results) {
+    console.log('getDriverAssignments', results);
     self.assignments = results.data.assignments;
-    self.checkForActive();
+    self.checkForActive(self.assignments);
     return results;
-  }, function(err){
+  }, function(err) {
     console.log('err at assignmentsService', err);
     self.resetApp();
     return self.$q.reject(err);
@@ -143,13 +129,13 @@ AgentService.prototype.getAssignments = function () {
 AgentService.prototype.getStatus = function () {
   var self = this;
 
-  return this.$http.get(this.rootUrl + 'status/', this.configObj).then(function(results){
+  return this.$http.get(this.rootUrl + 'status/', this.configObj).then(function(results) {
     self.clusters = results.data.groups;
-    if(self.checkForOnDuty()){
+    if (self.checkForOnDuty()) {
       self.startIntervalCheck();
     }
     return results;
-  }, function(err){
+  }, function(err) {
     console.log('err at getStatus', err);
     self.resetApp();
     return self.$q.reject(err);
@@ -163,12 +149,12 @@ AgentService.prototype.resolveStatuses = function () {
   var statusArray= [];
   var self = this;
 
-  for (var i in this.clusters){
+  for (var i in this.clusters) {
     statusArray.push(this.postStatus(this.clusters[i]));
   }
 
   this.$q.all(statusArray).then(function(results){
-    if (self.checkForOnDuty()){
+    if (self.checkForOnDuty()) {
       self.startIntervalCheck();
       self.getAssignments();
     } else {
@@ -190,7 +176,6 @@ AgentService.prototype.postStatus = function (cluster) {
   var emptyData = {};
 
   return this.$http.post(this.rootUrl + groupId + '/' + on_duty + '/', emptyData, this.configObj).then(function(results){
-    console.log('post status results', results);
     return results;
   }, function(err){
     console.log('err at postStatus', err);
@@ -202,13 +187,22 @@ AgentService.prototype.postStatus = function (cluster) {
 
 /**
 * Checks to see if user currently has an active assignment
+* @params{Array} - assignments
 */
-AgentService.prototype.checkForActive = function () {
-	if(angular.isDefined(this.assignments[0])){
-	  if(this.assignments[0].active){
-	    this.activeAssignment = this.assignments[0];
-	    this.$state.go('activeAssignment');
-	  }
+AgentService.prototype.checkForActive = function (assignments) {
+  console.log('assignments', assignments);
+	if (assignments[0]) {
+    for (var i = 0; i < assignments.length; i++) {
+      if (assignments[i].active && assignments[i].type == 'driver') {
+        this.activeAssignment = assignments[i];
+        console.log('activeDriver', this.assignments[i]);
+        this.$state.go('activeAssignment');
+      } else if (assignments[i].active && assignments[i].type == 'runner') {
+        this.activeAssignment = this.assignments[i];
+        console.log('activeRunner', this.assignments[i]);
+        this.$state.go('activeRunnerAssignment');
+      }
+    }
 	}
 };
 
@@ -217,8 +211,8 @@ AgentService.prototype.checkForActive = function () {
  * @returns {Boolean}
  */
 AgentService.prototype.checkForOnDuty = function () {
-	for (var i in this.clusters){
-		if(this.clusters[i].on_duty){
+	for (var i in this.clusters) {
+		if (this.clusters[i].on_duty) {
 			return true;
 		}
 	}
@@ -249,13 +243,12 @@ AgentService.prototype.checkForChanges = function () {
 
   updateObj.device_token = this.$window.localStorage.getItem("ionic_io_push_token") ? JSON.parse(this.$window.localStorage.getItem("ionic_io_push_token")).token : "";
 
-  if (this.currentLocation){
+  if (this.currentLocation) {
     updateObj['lat'] = this.currentLocation.coords.latitude;
     updateObj['lng'] = this.currentLocation.coords.longitude;
   }
 
 	return this.$http.post(this.rootUrl + 'checkin/', updateObj, this.configObj).then(function(result){
-		console.log('result from checkForChanges', result);
 		self.timeStamp = result.data.update;
 		if (result.data.refresh) {
 			self.getAssignments();
@@ -312,7 +305,6 @@ AgentService.prototype.assignmentAction = function (assignmentId, action) {
   this.$ionicLoading.show(this.ionicLoadingConfig);
 	return this.$http.post(this.rootUrl + 'assignments/' + action + assignmentId + '/', emptyObj, this.configObj).then(function(results){
 		self.$ionicLoading.hide();
-    console.log('assignment action', results);
 		return results;
 	}, function(err){
     console.log('err at assignmentAction', err);
@@ -332,7 +324,6 @@ AgentService.prototype.taskComplete = function (taskId) {
   var self = this;
 
   return this.$http.post(this.rootUrl + 'tasks/complete/' + taskId + '/', emptyObj, this.configObj).then(function(results){
-    console.log('task complete', results);
     return results;
   },function(err){
     console.log('err at taskComplete', err);
@@ -346,16 +337,47 @@ AgentService.prototype.taskComplete = function (taskId) {
 
 
 AgentService.prototype.getRunnerAssignments = function () {
-  console.log('getRunnerAssignments');
-  return this.testRunnerData;
+  var self = this;
+  return this.$http.get(this.rootUrl + 'runner_assignments/', this.configObj).then(function(results){
+    console.log('getRunnerAssingments', results);
+    self.runnerAssignments = results.data.runner_assignments;
+    self.checkForActive(self.runnerAssignments);
+    return results;
+  }, function(err){
+    console.log('err at assignmentsService', err);
+    self.resetApp();
+    return self.$q.reject(err);
+  });
 };
 
-AgentService.prototype.acceptRunnerAssignment = function () {
-  console.log('AcceptedRunnerAssignment!');
-  return;
+AgentService.prototype.acceptRunnerAssignment = function (id) {
+  var self = this;
+  var emptyObj = {};
+
+  this.$ionicLoading.show(this.ionicLoadingConfig);
+  return this.$http.post(this.rootUrl + 'runner_assignments/accept/' + id + '/',emptyObj, this.configObj).then(function(results) {
+    self.$ionicLoading.hide();
+    return results;
+  }, function(err) {
+    console.log('err at acceptRunnerAssignment', err);
+    self.$ionicLoading.hide();
+    self.resetApp();
+    return self.$q.reject(err);
+  });
 };
 
-AgentService.prototype.completeRunnerAssignment = function () {
-  console.log('completeRunnerAssignment!');
-  return;
+AgentService.prototype.completeRunnerAssignment = function (id) {
+  var self = this;
+  var emptyObj = {}
+
+  this.$ionicLoading.show(this.ionicLoadingConfig);
+  return this.$http.post(this.rootUrl + 'runner_assignments/complete/' + id + '/',emptyObj, this.configObj).then(function(results) {
+    self.$ionicLoading.hide();
+    return results;
+  }, function(err) {
+    console.log('err at completeRunnerAssignment', err);
+    self.$ionicLoading.hide();
+    self.resetApp();
+    return self.$q.reject(err);
+  });
 };
