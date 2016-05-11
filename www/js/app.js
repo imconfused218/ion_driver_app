@@ -86,6 +86,11 @@ angular.module('starter', ['ionic','ionic.service.core',  'activeCtrl', 'agentSe
       url: '/activeRunnerAssignment',
       controller: 'runnerCtrl as runnerCtrl',
       templateUrl: 'activeRunnerAssignment.html'
+    })
+    .state('selectedRunnerOrder', {
+      url: '/selectedRunnerOrder',
+      controller: 'runnerCtrl as runnerCtrl',
+      templateUrl: 'selectedRunnerOrder.html'
     });
   $urlRouterProvider.otherwise('/logIn');
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(geo|mailto|tel|maps):/);
@@ -134,7 +139,7 @@ AssignmentsCtrl.prototype.toggleDuty = function () {
  */
 AssignmentsCtrl.prototype.selectAssignment = function (assignment) {
     this.agentService.selectedAssignment = assignment;
-    if (assignment.runner){
+    if (assignment.type == "runner"){
       this.$state.go('selectedRunnerAssignment');
     } else {
       this.$state.go('selectedAssignment');
@@ -146,15 +151,16 @@ AssignmentsCtrl.prototype.selectAssignment = function (assignment) {
  */
 AssignmentsCtrl.prototype.acceptAssignment = function () {
   var self = this;
+  var assignmentId = this.agentService.selectedAssignment.id;
 
-  if (this.agentService.selectedAssignment.runner) {
-    this.agentService.acceptRunnerAssignment();
-    this.agentService.selectAssignment = undefined;
-    this.$ionicListDelegate.closeOptionButtons();
-    this.$state.go('activeRunnerAssignment');
+  if (this.agentService.selectedAssignment.type == "runner") {
+    this.agentService.acceptRunnerAssignment(assignmentId).then(function(result) {
+      self.agentService.getAssignments();
+      self.agentService.selectAssignment = undefined;
+      self.$ionicListDelegate.closeOptionButtons();
+      self.$state.go('activeRunnerAssignment');
+    });
   } else {
-    var assignmentId = this.agentService.selectedAssignment.id;
-
     this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
       self.agentService.getAssignments();
       self.agentService.selectedAssignment = undefined;
@@ -173,9 +179,37 @@ AssignmentsCtrl.prototype.refreshList = function () {
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////
-function LogInCtrl (agentService, $window, $state, $ionicPlatform) {
+function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform) {
   this.agentService = agentService;
   this.$state = $state;
+  this.$ionicLoading = $ionicLoading;
+  this.$ioicPlatform = $ionicPlatform;
+  var self = this;
+
+
+  this.deploy = new Ionic.Deploy();
+
+  this.deploy.check().then(function(hasUpdate) {
+    
+    if (hasUpdate) {
+      self.$ionicLoading.show({
+        template: "Updating.."
+      });
+      self.deploy.update().then(function(deployResult) {
+        self.$ionicLoading.hide()
+      }, function(deployUpdateError) {
+        self.$ionicLoading.hide()
+        // fired if we're unable to check for updates or if any 
+        // errors have occured.
+      }, function(deployProgress) {
+        self.$ionicLoading.hide()
+        // this is a progress callback, so it will be called a lot
+        // deployProgress will be an Integer representing the current
+        // completion percentage.
+      });
+    }
+    
+  })
 
 
 
@@ -188,7 +222,10 @@ function LogInCtrl (agentService, $window, $state, $ionicPlatform) {
     email : '',
     password: ''
   };
+
+
 }
+
 
 /**
  * Passes email and password to server
@@ -199,5 +236,18 @@ LogInCtrl.prototype.logIn = function () {
     self.$state.go('assignmentsList');
   }, function(err){
     console.log('err at logInCtrl', err);
+  });
+};
+
+
+LogInCtrl.prototype.getUpdate = function () {
+  var self = this;
+  this.$loading.show({
+    template: "Updating.."
+  });
+  this.deploy.update().then(function(res) {
+    self.$loading.hide();
+  }, function (err){
+    self.$loading.hide();
   });
 };

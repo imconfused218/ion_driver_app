@@ -159,7 +159,10 @@
 	color: #333;
 }
 
-
+.currentHotel {
+	font-size: 0.9em;
+	font-style: italic;
+}
 /*************************Current Assignment View***********/
 
 .currentAssignment {

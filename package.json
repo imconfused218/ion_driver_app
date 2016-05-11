@@ -22,10 +22,7 @@
         "SENDER_ID": "180626893915"
       }
     },
-    {
-      "locator": "https://github.com/apache/cordova-plugin-whitelist.git",
-      "id": "cordova-plugin-whitelist"
-    },
+    "cordova-plugin-whitelist",
     "ionic-plugin-deploy"
   ],
   "cordovaPlatforms": [
@@ -34,6 +31,11 @@
       "platform": "android",
       "version": "",
       "locator": "android"
+    },
+    {
+      "platform": "ios",
+      "version": "",
+      "locator": "ios"
     }
   ]
 }

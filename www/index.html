@@ -76,7 +76,7 @@
             <ion-content class='contentContainer'>
               <ion-refresher on-refresh='assignmentsCtrl.refreshList()'></ion-refresher>
               <div class='offDutyCover' ng-show='!assignmentsCtrl.agentService.onDuty'>You are currently offline</div>
-              <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && !assignmentsCtrl.agentService.testRunnerData.length && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
+              <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && !assignmentsCtrl.agentService.runnerAssignments.length && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
               <ion-list >
                 <div class='spacing'></div>
                 <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>
@@ -91,7 +91,7 @@
                     <i class='icon ion-chevron-right'></i>
                   </div>
                 </ion-item>
-                <ion-item ng-class='{runnerNeeded: runnerAssignment.status == "Runner Needed!"}' ng-repeat='runnerAssignment in assignmentsCtrl.agentService.testRunnerData' ng-click='assignmentsCtrl.selectAssignment(runnerAssignment)' class='assignmentRow'>
+                <ion-item ng-class='{runnerNeeded: runnerAssignment.status == "Runner Needed!"}' ng-repeat='runnerAssignment in assignmentsCtrl.agentService.runnerAssignments' ng-click='assignmentsCtrl.selectAssignment(runnerAssignment)' class='assignmentRow'>
                 <div class='assignmentRowInfo'>
                   <div class='dropOff'><span style='padding-right: 0.1em' class='ion-ios-body'></span> Status: {{runnerAssignment.status}}</div>
                   <div class='assignment-task-info'>{{runnerAssignment.dropoff}} Drop OFF</div>
@@ -148,7 +148,7 @@
             </ion-item>
             <ion-item class='taskInfoRow greyBackground' ng-class='{runnerNeeded: assignmentsCtrl.agentService.selectedAssignment.status == "Runner Needed!"}'>
               <div class='taskInfoDetails'>
-                <div class='taskPickup'>{{assignmentsCtrl.agentService.selectedAssignment.restaurant}}</div>
+                <div class='taskPickup'>{{assignmentsCtrl.agentService.selectedAssignment.tasks[0].place}}</div>
                 <div class='taskPlace'>Status: {{assignmentsCtrl.agentService.selectedAssignment.status}}</div>
               </div>
             </ion-item>
@@ -284,13 +284,18 @@
         <ion-content>
           <ion-list>
             <ion-item class='currentAssignmentSubheader'>
-              <div class='currentDropOffTime'>{{runnerCtrl.activeRunnerAssignment.dropoff}} DROPOFF</div>
-              <div class='currentDestination'>{{runnerCtrl.activeRunnerAssignment.restaurant}}</div>
+              <div>
+              <div class='currentDropOffTime'>{{runnerCtrl.agentService.activeAssignment.dropoff}} DROPOFF</div>
+              <div class='currentHotel'>
+                {{runnerCtrl.agentService.activeAssignment.destination}}
+              </div>
+              </div>
+              <div class='currentDestination'>{{runnerCtrl.agentService.activeAssignment.tasks[0].place}}</div>
             </ion-item>
-            <ion-item class='taskInfoRow'>
-              <div class='taskInfoDetails'>
-                <div class='taskPlace'>Customer: {{runnerCtrl.activeRunnerAssignment.customer}}</div>
-                <div class='taskPlace'>Room: {{runnerCtrl.activeRunnerAssignment.room}}</div>
+            <ion-item class='taskInfoRow' ng-repeat='order in runnerCtrl.agentService.activeAssignment.tasks[0].orders' ng-click='runnerCtrl.selectOrder(order)'>
+              <div class='taskInfoDetails' >
+                <div class='taskPlace'>Customer: {{order.name}}</div>
+                <div class='taskPlace'>Room: {{order.details}}</div>
               </div>
               <div class='chevronButton'>
                 <i class='ionic ion-chevron-right'></i>
@@ -298,8 +303,40 @@
             </ion-item>
           </ion-list>
           <div class='buttonContainer'>
-             <button class='button button-block button-balanced' ng-click='runnerCtrl.completeAssignment()'>Complete Assignment</button>
+             <button class='button button-block button-balanced' ng-click='runnerCtrl.completeAssignment(runnerCtrl.agentService.activeAssignment)'>Complete Assignment</button>
           </div>
+        </ion-content>
+      </ion-view>
+    </script>
+
+    <script id="selectedRunnerOrder.html" type="text/ng-template">
+      <ion-view view-title='Order Details'>
+        <ion-content>
+          <div class='orderInfoRow'>
+            <div class='orderInfoContainer'>
+              <div class='order-name'>Order for {{runnerCtrl.agentService.selectedOrder.name}}</div>
+              <div class='subOrderInfoContainer'>
+                <div class='order-delivery-location'>{{runnerCtrl.agentService.selectedOrder.details}}</div>
+                <div class='order-item-count'> - {{runnerCtrl.agentService.selectedOrder.item_count}} Item(s)</div>
+              </div>
+            </div>
+            <a class='phoneButton ion-ios-telephone' ng-href="tel: {{runnerCtrl.agentService.selectedOrder.phone_number}}"></a>
+          </div>
+          <div class='clear'></div>
+          <ion-list>
+            <ion-item ng-repeat='entry in runnerCtrl.agentService.selectedOrder.entries' >
+              <div class='entryRow'>
+                <div class='entryContainer'>
+                  <div class='entryIcon'><img ng-src='http:{{entry.icon}}'></div>
+                   x<div class='entryQuant'>{{entry.quant}}</div>
+                  <div class='entryName'>
+                    {{entry.name}}
+                    <div class='entryNotes' ng-repeat='note in entry.notes'>{{note}}</div>
+                  </div>
+                </div>
+              </div>
+            </ion-item>
+          </ion-list>
         </ion-content>
       </ion-view>
     </script>

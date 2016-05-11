@@ -5,12 +5,24 @@ function RunnerCtrl (agentService, $state) {
 	this.agentService = agentService;
 	this.$state = $state;
 
-	this.activeRunnerAssignment = this.agentService.getRunnerAssignments()[0];
+  if (!this.agentService.activeAssignment) {
+    $state.go('assignmentsList')
+  } 
+  
 }
 
+RunnerCtrl.prototype.selectOrder = function (order) {
+  this.agentService.selectedOrder = order;
+  this.$state.go('selectedRunnerOrder');
+};
 
-RunnerCtrl.prototype.completeAssignment = function () {
+RunnerCtrl.prototype.completeAssignment = function (assignment) {
 	var self = this;
-	this.agentService.completeRunnerAssignment();
-	this.agentService.resetApp();
+
+	this.agentService.completeRunnerAssignment(assignment.id).then(function(result) {
+    self.agentService.resetApp();
+  }, function(err){
+    self.agentService.resetApp();
+  });
+	
 };
