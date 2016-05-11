@@ -168,11 +168,11 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
       self.$state.go('activeAssignment');
     });
   }
-  
 };
 
 AssignmentsCtrl.prototype.refreshList = function () {
   this.agentService.getAssignments();
+  this.agentService.getRunnerAssignments();
   this.$scope.$broadcast('scroll.refreshComplete');
   this.$scope.$apply();
 };
@@ -208,13 +208,13 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
         // completion percentage.
       });
     }
-    
-  })
+
+  });
 
 
 
   //Checks to see if the user has already been authenticated in the past
-  if ($window.localStorage['configObj']){
+  if ($window.localStorage['configObj']) {
     this.$state.go('assignmentsList');
   }
 
@@ -222,7 +222,6 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
     email : '',
     password: ''
   };
-
 
 }
 

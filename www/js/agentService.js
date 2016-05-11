@@ -157,9 +157,11 @@ AgentService.prototype.resolveStatuses = function () {
     if (self.checkForOnDuty()) {
       self.startIntervalCheck();
       self.getAssignments();
+      self.getRunnerAssignments();
     } else {
       self.stopIntervalCheck();
       self.assignments = [];
+      self.runnerAssignments = [];
     }
   })
 };
