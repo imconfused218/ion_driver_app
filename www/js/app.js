@@ -5,6 +5,7 @@ angular.module('starter', ['ionic','ionic.service.core',  'activeCtrl', 'agentSe
 .run(function($ionicPlatform, $ionicHistory) {
   $ionicPlatform.ready(function() {
 
+
     var push = new Ionic.Push({
       "debug": true
     });
@@ -172,9 +173,11 @@ AssignmentsCtrl.prototype.refreshList = function () {
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////
-function LogInCtrl (agentService, $window, $state) {
+function LogInCtrl (agentService, $window, $state, $ionicPlatform) {
   this.agentService = agentService;
   this.$state = $state;
+
+
 
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj']){
