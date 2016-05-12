@@ -15,15 +15,15 @@
     "shelljs": "^0.3.0"
   },
   "cordovaPlugins": [
+    "cordova-plugin-whitelist",
+    "ionic-plugin-deploy",
     {
       "id": "phonegap-plugin-push",
       "locator": "phonegap-plugin-push",
       "variables": {
         "SENDER_ID": "180626893915"
       }
-    },
-    "cordova-plugin-whitelist",
-    "ionic-plugin-deploy"
+    }
   ],
   "cordovaPlatforms": [
     "android",

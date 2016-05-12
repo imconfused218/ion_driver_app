@@ -1,8 +1,8 @@
 
 //Main module that everything is based off of
-angular.module('starter', ['ionic','ionic.service.core',  'activeCtrl', 'agentService', 'runnerCtrl'])
+angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentService', 'runnerCtrl', 'ionic.service.analytics'])
 
-.run(function($ionicPlatform, $ionicHistory) {
+.run(function($ionicPlatform, $ionicHistory, $ionicAnalytics) {
   $ionicPlatform.ready(function() {
 
 
@@ -12,7 +12,10 @@ angular.module('starter', ['ionic','ionic.service.core',  'activeCtrl', 'agentSe
 
     push.register(function(token){
       console.log('Device token', token.token);
+      self.$window.localStorage['device_token'] = JSON.stringify(token.token);
+      push.saveToken(token);
     });
+
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -32,6 +35,9 @@ angular.module('starter', ['ionic','ionic.service.core',  'activeCtrl', 'agentSe
       $ionicHistory.goBack();
     }
   }, 101);
+
+  $ionicAnalytics.register();
+
 })
 
 .controller('assignmentsListController', AssignmentsCtrl)
