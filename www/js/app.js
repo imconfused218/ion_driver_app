@@ -2,9 +2,10 @@
 //Main module that everything is based off of
 angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentService', 'runnerCtrl', 'ionic.service.analytics'])
 
-.run(function($ionicPlatform, $ionicHistory, $ionicAnalytics) {
+.run(function($ionicPlatform, $ionicHistory, $ionicAnalytics, $window) {
   $ionicPlatform.ready(function() {
-
+    var self = this;
+    this.$window = $window;
 
     var push = new Ionic.Push({
       "debug": true
@@ -12,6 +13,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
 
     push.register(function(token){
       console.log('Device token', token.token);
+      self.$window.localStorage['device_token'] = JSON.stringify(token.token);
       push.saveToken(token);
     });
 
@@ -184,11 +186,14 @@ AssignmentsCtrl.prototype.refreshList = function () {
 
 
 ////////////////////////////////////Controller for the logInView///////////////////////////
-function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform) {
+function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform, $ionicPopup, $timeout) {
   this.agentService = agentService;
   this.$state = $state;
+  this.$timeout = $timeout;
+  this.$window = $window;
   this.$ionicLoading = $ionicLoading;
   this.$ioicPlatform = $ionicPlatform;
+  this.$ionicPopup = $ionicPopup;
   var self = this;
 
 
@@ -219,7 +224,7 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
 
 
   //Checks to see if the user has already been authenticated in the past
-  if ($window.localStorage['configObj']) {
+  if ($window.localStorage['configObj'] && $window.localStorage['device_token']) {
     this.$state.go('assignmentsList');
   }
 
@@ -227,6 +232,7 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
     email : '',
     password: ''
   };
+
 
 }
 
@@ -236,14 +242,20 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
  */
 LogInCtrl.prototype.logIn = function () {
   var self = this;
+
+  this.logInField['device_token'] = JSON.parse(this.$window.localStorage.getItem("device_token")) || "";
+
   this.agentService.logIn(this.logInField).then(function(results){
     self.$state.go('assignmentsList');
   }, function(err){
-    console.log('err at logInCtrl', err);
+    console.log('err at logIn', err);
+    self.showAlert("Sorry an error has occured", err);
   });
 };
 
-
+/**
+ * Checks to see if an update is available
+ */
 LogInCtrl.prototype.getUpdate = function () {
   var self = this;
   this.$loading.show({
@@ -254,4 +266,19 @@ LogInCtrl.prototype.getUpdate = function () {
   }, function (err){
     self.$loading.hide();
   });
+};
+
+/**
+ * Displays a popup with a message then closes after 3 seconds
+ * @Params{String} - message
+ */
+LogInCtrl.prototype.showAlert = function (title, message) {
+  var alertPopup = this.$ionicPopup.alert({
+    title: title,
+    template: message
+  });
+
+  this.$timeout(function(){
+    alertPopup.close();
+  }, 3000);
 };
