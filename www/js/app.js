@@ -117,6 +117,7 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicLi
     this.$state.go('assignmentsList');
   }
 
+
   /*if(!this.agentService.selectedAssignment){
     console.log('this happened');
     this.$ionicHistory.nextViewOptions({
@@ -128,6 +129,18 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicLi
     });
   }*/
 }
+
+/**
+ * Allows user to swipe to see sideMenu or not
+ * @returns{Boolean}
+ */
+AssignmentsCtrl.prototype.enableSideMenu = function () {
+  if (this.$state.is('logIn')) {
+    return false;
+  } else {
+    return true;
+  }
+};
 
 /**Shows or hides side menu */
 AssignmentsCtrl.prototype.toggleSideMenu = function () {
@@ -197,6 +210,9 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
   var self = this;
 
   this.deploy = new Ionic.Deploy();
+
+  //Sets channel for testing or production
+  /*this.deploy.setChannel('dev');*/
 
   this.deploy.check().then(function(hasUpdate) {
     if (hasUpdate) {
