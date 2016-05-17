@@ -1,8 +1,8 @@
 
 //Main module that everything is based off of
-angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentService', 'runnerCtrl', 'ionic.service.analytics'])
+angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentService', 'runnerCtrl'])
 
-.run(function($ionicPlatform, $ionicHistory, $ionicAnalytics, $window) {
+.run(function($ionicPlatform, $ionicHistory, $window) {
   $ionicPlatform.ready(function() {
     var self = this;
     this.$window = $window;
@@ -16,7 +16,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
       self.$window.localStorage['device_token'] = JSON.stringify(token.token);
       push.saveToken(token);
     });
-
+  
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -28,16 +28,16 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
   });
 
   $ionicPlatform.registerBackButtonAction(function (event) {
-    if ($ionicHistory.currentStateName() === 'assignmentsList' ){
+    if ($ionicHistory.currentStateName() === 'assignmentsList' ) {
       event.preventDefault();
-    } else if ($ionicHistory.currentStateName() === 'activeAssignment'){
+    } else if ($ionicHistory.currentStateName() === 'activeAssignment') {
+      event.preventDefault();
+    } else if ($ionicHistory.currentStateName() === 'activeRunnerAssignment') {
       event.preventDefault();
     } else {
       $ionicHistory.goBack();
     }
   }, 101);
-
-  $ionicAnalytics.register();
 
 })
 
@@ -105,7 +105,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
 
 
 ////////////////////////////////Controller for the assignmentsList views///////////////////////
-function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $ionicHistory, $state, $ionicListDelegate, $scope) {
+function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicListDelegate, $scope) {
   this.$ionicListDelegate = $ionicListDelegate;
   this.$ionicSideMenuDelegate = $ionicSideMenuDelegate;
   this.$scope = $scope;
@@ -196,31 +196,28 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
   this.$ionicPopup = $ionicPopup;
   var self = this;
 
-
   this.deploy = new Ionic.Deploy();
 
+  
+
   this.deploy.check().then(function(hasUpdate) {
-    
     if (hasUpdate) {
       self.$ionicLoading.show({
         template: "Updating.."
       });
       self.deploy.update().then(function(deployResult) {
-        self.$ionicLoading.hide()
+        self.$ionicLoading.hide();
       }, function(deployUpdateError) {
-        self.$ionicLoading.hide()
+        self.$ionicLoading.hide();
         // fired if we're unable to check for updates or if any 
         // errors have occured.
       }, function(deployProgress) {
-        self.$ionicLoading.hide()
         // this is a progress callback, so it will be called a lot
         // deployProgress will be an Integer representing the current
         // completion percentage.
       });
     }
-
   });
-
 
 
   //Checks to see if the user has already been authenticated in the past

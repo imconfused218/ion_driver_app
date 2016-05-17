@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src &apos;self&apos; &apos;unsafe-inline&apos;; script-src &apos;self&apos; &apos;unsafe-inline&apos; &apos;unsafe-eval&apos;">
 
     <title>Driver App</title>
-
+    
     <!--<meta http-equiv="Content-Security-Policy" content="default-src &apos;self&apos; yourhost.com ws://localhost:35729 data: gap: https://ssl.gstatic.com; style-src &apos;self&apos; &apos;unsafe-inline&apos;; media-src *;script-src &apos;self&apos; localhost:35729 &apos;unsafe-eval&apos; &apos;unsafe-inline&apos;">-->
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
@@ -76,7 +76,7 @@
             <ion-content class='contentContainer'>
               <ion-refresher on-refresh='assignmentsCtrl.refreshList()'></ion-refresher>
               <div class='offDutyCover' ng-show='!assignmentsCtrl.agentService.onDuty'>You are currently offline</div>
-              <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && !assignmentsCtrl.agentService.runnerAssignments.length && assignmentsCtrl.agentService.onDuty'>No assignments available</div>
+              <div class='noAssignments' ng-show='!assignmentsCtrl.agentService.assignments.length && !assignmentsCtrl.agentService.runnerAssignments.length && assignmentsCtrl.agentService.onDuty'>No assignments available.</div>
               <ion-list >
                 <div class='spacing'></div>
                 <ion-item ng-repeat='assignment in assignmentsCtrl.agentService.assignments' ng-click='assignmentsCtrl.selectAssignment(assignment)' class='assignmentRow'>
@@ -177,7 +177,7 @@
         </ion-header-bar>
         <ion-content>
           <div class='logInHeader'>Sterling Driver App</div>
-          <div class='logInSubHeader'> Please log In!</div>
+          <div class='logInSubHeader'> Please log In</div>
           <form>
             <label class='item item-input'>
               <span class='input-label'>Email</span>
