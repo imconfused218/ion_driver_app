@@ -198,8 +198,6 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
 
   this.deploy = new Ionic.Deploy();
 
-  
-
   this.deploy.check().then(function(hasUpdate) {
     if (hasUpdate) {
       self.$ionicLoading.show({

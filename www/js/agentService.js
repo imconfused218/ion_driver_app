@@ -12,7 +12,7 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   this.$interval = $interval;
   this.$window = $window;
   this.$ionicLoading = $ionicLoading;
-  this.hostUrl = 'https://sandbox.menu.me/';
+  this.hostUrl = 'https://menu.me/';
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
