@@ -16,14 +16,15 @@
   },
   "cordovaPlugins": [
     "cordova-plugin-whitelist",
-    "ionic-plugin-deploy",
     {
       "id": "phonegap-plugin-push",
       "locator": "phonegap-plugin-push",
       "variables": {
         "SENDER_ID": "180626893915"
       }
-    }
+    },
+    "cordova-plugin-transport-security",
+    "ionic-plugin-deploy"
   ],
   "cordovaPlatforms": [
     "android",

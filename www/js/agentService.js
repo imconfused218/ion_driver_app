@@ -197,11 +197,9 @@ AgentService.prototype.checkForActive = function (assignments) {
     for (var i = 0; i < assignments.length; i++) {
       if (assignments[i].active && assignments[i].type == 'driver') {
         this.activeAssignment = assignments[i];
-        console.log('activeDriver', this.assignments[i]);
         this.$state.go('activeAssignment');
       } else if (assignments[i].active && assignments[i].type == 'runner') {
         this.activeAssignment = this.assignments[i];
-        console.log('activeRunner', this.assignments[i]);
         this.$state.go('activeRunnerAssignment');
       }
     }
@@ -341,7 +339,6 @@ AgentService.prototype.taskComplete = function (taskId) {
 AgentService.prototype.getRunnerAssignments = function () {
   var self = this;
   return this.$http.get(this.rootUrl + 'runner_assignments/', this.configObj).then(function(results){
-    console.log('getRunnerAssingments', results);
     self.runnerAssignments = results.data.runner_assignments;
     self.checkForActive(self.runnerAssignments);
     return results;
