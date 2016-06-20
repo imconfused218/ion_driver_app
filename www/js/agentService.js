@@ -12,7 +12,7 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   this.$interval = $interval;
   this.$window = $window;
   this.$ionicLoading = $ionicLoading;
-  this.hostUrl = 'https://menu.me/';
+  this.hostUrl = 'https://sandbox.menu.me/';
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
@@ -38,6 +38,7 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   this.intervalCheck;
 
   this.timeStamp = '';
+
 
   this.configObj = {
     headers: {
@@ -103,6 +104,26 @@ AgentService.prototype.logIn = function (logInInfo) {
 };
 
 /**
+ * On assignments page load, calls getStatus, getAssignments, and getRunnerAssignments
+ */
+AgentService.prototype.getInitialInformation = function () {
+  var self = this;
+  var promisesArray = [];
+
+  console.log('this was called');
+
+  promisesArray.push(this.getAssignments());
+  promisesArray.push(this.getRunnerAssignments());
+  promisesArray.push(this.getStatus());
+
+  return this.$q.all(promisesArray).then(function(result){
+    return result;
+  }, function(err){
+    return self.$q.reject(err);
+  });
+};
+
+/**
  * Gets all assignments for current onDuty location
  * @returns {Promise<Object>}
  */
@@ -116,7 +137,6 @@ AgentService.prototype.getAssignments = function () {
     return results;
   }, function(err) {
     console.log('err at assignmentsService', err);
-    self.resetApp();
     return self.$q.reject(err);
   });
 };
@@ -137,7 +157,6 @@ AgentService.prototype.getStatus = function () {
     return results;
   }, function(err) {
     console.log('err at getStatus', err);
-    self.resetApp();
     return self.$q.reject(err);
   });
 };
@@ -163,6 +182,8 @@ AgentService.prototype.resolveStatuses = function () {
       self.assignments = [];
       self.runnerAssignments = [];
     }
+  }, function(err) {
+    return self.$q.reject(err);
   })
 };
 
@@ -181,7 +202,6 @@ AgentService.prototype.postStatus = function (cluster) {
     return results;
   }, function(err){
     console.log('err at postStatus', err);
-    self.resetApp();
     return self.$q.reject(err);
   });
 
@@ -344,7 +364,6 @@ AgentService.prototype.getRunnerAssignments = function () {
     return results;
   }, function(err){
     console.log('err at assignmentsService', err);
-    self.resetApp();
     return self.$q.reject(err);
   });
 };

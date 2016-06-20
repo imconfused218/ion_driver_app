@@ -45,24 +45,12 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
 .controller('logInCtrl', LogInCtrl)
 
 //routing for different views in driverApp
-.config(function($compileProvider, $stateProvider, $urlRouterProvider, $httpProvider){
+.config(function($compileProvider, $stateProvider, $urlRouterProvider, $httpProvider) {
   $stateProvider
     .state('assignmentsList', {
       url: '/list',
       controller: 'assignmentsListController as assignmentsCtrl',
-      templateUrl: 'assignmentsList.html',
-      resolve: {
-        getInitialStatus: function(agentService, $window) {
-          agentService.configObj = JSON.parse($window.localStorage.getItem('configObj'));
-          return agentService.getStatus();
-        },
-        getInitialAssignments: function(agentService) {
-          return agentService.getAssignments();
-        },
-        getInitialRunnerAssignments: function(agentService) {
-          return agentService.getRunnerAssignments();
-        }
-      }
+      templateUrl: 'assignmentsList.html'
     })
     .state('logIn', {
       url: '/logIn',
@@ -149,7 +137,11 @@ AssignmentsCtrl.prototype.toggleSideMenu = function () {
 
 /**Tells server if user is on duty or off */
 AssignmentsCtrl.prototype.toggleDuty = function () {
-  this.agentService.resolveStatuses();
+  this.agentService.resolveStatuses().then(function(result) {
+    return result;
+  }, function(err) {
+    
+  });
   this.toggleSideMenu();
 };
 
@@ -212,7 +204,7 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
   this.deploy = new Ionic.Deploy();
 
   //Sets channel for testing or production
-  /*this.deploy.setChannel('dev');*/
+  this.deploy.setChannel('dev');
 
   this.deploy.check().then(function(hasUpdate) {
     if (hasUpdate) {
@@ -236,7 +228,13 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
 
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj'] && $window.localStorage['device_token']) {
-    this.$state.go('assignmentsList');
+    this.agentService.configObj = JSON.parse($window.localStorage.getItem('configObj'));
+    this.agentService.getInitialInformation().then(function(results) {
+      self.$state.go('assignmentsList');
+    }, function(err) {
+      $window.localStorage.clear();
+      self.showAlert('Sorry something went wrong. Please try logging in again', err.statusText);
+    });
   }
 
   this.logInField = {
@@ -256,11 +254,16 @@ LogInCtrl.prototype.logIn = function () {
 
   this.logInField['device_token'] = JSON.parse(this.$window.localStorage.getItem("device_token")) || "";
 
-  this.agentService.logIn(this.logInField).then(function(results){
-    self.$state.go('assignmentsList');
+  this.agentService.logIn(this.logInField).then(function(results) {
+    self.agentService.getInitialInformation().then(function(results) {
+      self.$state.go('assignmentsList');
+    }, function(err) {
+      console.log('err at getInitialInformation', err);
+      self.showAlert('Sorry log in failed. Please try again!', err. statusText);
+    });
   }, function(err){
     console.log('err at logIn', err);
-    self.showAlert("Sorry an error has occured", err);
+    self.showAlert("Sorry log in failed. Please try again!", err.statusText);
   });
 };
 
@@ -291,5 +294,5 @@ LogInCtrl.prototype.showAlert = function (title, message) {
 
   this.$timeout(function(){
     alertPopup.close();
-  }, 3000);
+  }, 4000);
 };
