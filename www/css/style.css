@@ -28,6 +28,13 @@
 	border-radius: 10px;
 }
 
+.internetProblem {
+	background-color: orange;
+	font-size: 18px;
+	text-align: center;
+	padding: 0.6em 0;
+}
+
 /*--------------------Log In View--------------*/
 
 .bar .logInTitle {

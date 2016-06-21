@@ -2,9 +2,11 @@ angular.module('activeCtrl', ['ionic', 'agentService'])
 .controller('activeCtrl', ActiveCtrl);
 
 //Controller for a user's current assignment
-function ActiveCtrl (agentService, $state, $ionicHistory) {
+function ActiveCtrl (agentService, $state, $ionicHistory, $ionicPopup, $q) {
 	this.agentService = agentService;
 	this.$state = $state;
+	this.$ionicPopup = $ionicPopup;
+	this.$q = $q;
 	//this.$ionicHistory = $ionicHistory;
 
 	this.allEntriesBeGot = false;
@@ -32,8 +34,18 @@ function ActiveCtrl (agentService, $state, $ionicHistory) {
  * @param{Number} taskId
  */
 ActiveCtrl.prototype.taskComplete = function (taskId) {
+	var self = this;
 	var emptyObj = {};
-	this.agentService.taskComplete(taskId);
+
+	return this.agentService.taskComplete(taskId).then(function(result) {
+		return result;
+	}, function(err) {
+		self.agentService.getAssignments().then(function(result) {
+			return result;
+		}, function(err) {
+			self.makePopup("Connection Error", "Please check your internet connection", "alert");
+		});
+	});
 };
 
 /**
@@ -44,6 +56,8 @@ ActiveCtrl.prototype.arriveAssignment = function () {
 	var self = this;
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'arrive/').then(function(results){
 		self.assignmentReadyToFinish = true;
+	}, function(err) {
+		self.makePopup("Error", "Please try again", "alert")
 	});
 };
 
@@ -56,7 +70,18 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'complete/').then(function(results){
 		self.assignmentReadyToFinish = false;
 		self.allEntriesBeGot = false;
-		self.agentService.resetApp();
+		self.agentService.selectedAssignment = undefined;
+  	self.agentService.selectedOrder = undefined;
+  	self.agentService.activeAssignment = undefined;
+  	self.agentService.orderGottenIds = [];
+  	self.agentService.allTasksComplete = false;
+  	self.agentService.getAssignments().then(function(result) {
+  		self.$state.go("assignmentsList");
+  	}, function(err) {
+  		self.agentService.resetApp();
+  	})
+	}, function(err) {
+		self.makePopup("Error", "Unable to complete assignment", "alert")
 	})
 };
 
@@ -101,8 +126,8 @@ ActiveCtrl.prototype.orderBeGot = function () {
  * @returns{Boolean}
  */
 ActiveCtrl.prototype.checkOrderBeGot = function (order) {
-	if(!order){return false;}
-	if(this.agentService.orderGottenIds.indexOf(order.id) < 0){
+	if (!order) return false;
+	if (this.agentService.orderGottenIds.indexOf(order.id) < 0) {
 		return false;
 	} else {
 		return true;
@@ -116,11 +141,11 @@ ActiveCtrl.prototype.checkOrderBeGot = function (order) {
 ActiveCtrl.prototype.checkAllTasksComplete = function () {
 	var currentAssignment = this.agentService.activeAssignment;
 
-	for (var i = 0; i < currentAssignment.tasks.length; i++){
+	for (var i = 0; i < currentAssignment.tasks.length; i++) {
 		var currentTask = currentAssignment.tasks[i];
-		if (!(currentTask.status === 'complete')){
-			for (var x=0; x < currentTask.orders.length; x++){
-				if(!this.checkOrderBeGot(currentTask.orders[x])) {
+		if (!(currentTask.status === 'complete')) {
+			for (var x=0; x < currentTask.orders.length; x++) {
+				if (!this.checkOrderBeGot(currentTask.orders[x])) {
 					return;
 				}
 			}
@@ -166,3 +191,20 @@ ActiveCtrl.prototype.allEntriesChecked = function () {
 ActiveCtrl.prototype.checkStatus = function (task) {
 	return task.status == 'active' ? true : false;
 };
+
+ActiveCtrl.prototype.makePopup = function (title, desc, type) {
+  var alertPopup = this.$ionicPopup[type]({
+    title: title || "Error",
+    template: desc || "",
+  });
+  return alertPopup;
+};
+
+
+
+
+
+
+
+
+

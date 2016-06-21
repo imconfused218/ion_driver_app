@@ -39,6 +39,8 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
 
   this.timeStamp = '';
 
+  this.internetProblem = false;
+
 
   this.configObj = {
     headers: {
@@ -64,7 +66,9 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
  * If an error or something goes wrong reset the app
  */
 AgentService.prototype.resetApp = function () {
-  this.onduty = false;
+  var self = this;
+
+  this.stopIntervalCheck();
   this.clusters = [];
   this.assignments = [];
   this.runnerAssignments = [];
@@ -73,10 +77,14 @@ AgentService.prototype.resetApp = function () {
   this.activeAssignment = undefined;
   this.orderGottenIds = [];
   this.allTasksComplete = false;
-  this.intervalCheck = undefined;
   this.currentLocation = undefined;
   this.timeStamp = '';
-  this.$state.go('assignmentsList')
+  return this.getInitialInformation().then(function(result) {
+    self.$state.go('assignmentsList')
+    return result;
+  }, function(err) {
+    return self.$q.reject(err);
+  });
 };
 
 /**
@@ -109,8 +117,6 @@ AgentService.prototype.logIn = function (logInInfo) {
 AgentService.prototype.getInitialInformation = function () {
   var self = this;
   var promisesArray = [];
-
-  console.log('this was called');
 
   promisesArray.push(this.getAssignments());
   promisesArray.push(this.getRunnerAssignments());
@@ -153,6 +159,8 @@ AgentService.prototype.getStatus = function () {
     self.clusters = results.data.groups;
     if (self.checkForOnDuty()) {
       self.startIntervalCheck();
+    } else {
+      self.stopIntervalCheck();
     }
     return results;
   }, function(err) {
@@ -172,15 +180,15 @@ AgentService.prototype.resolveStatuses = function () {
     statusArray.push(this.postStatus(this.clusters[i]));
   }
 
-  this.$q.all(statusArray).then(function(results){
+  return this.$q.all(statusArray).then(function(results){
     if (self.checkForOnDuty()) {
       self.startIntervalCheck();
-      self.getAssignments();
-      self.getRunnerAssignments();
+      return results;
     } else {
       self.stopIntervalCheck();
       self.assignments = [];
       self.runnerAssignments = [];
+      return results;
     }
   }, function(err) {
     return self.$q.reject(err);
@@ -212,7 +220,6 @@ AgentService.prototype.postStatus = function (cluster) {
 * @params{Array} - assignments
 */
 AgentService.prototype.checkForActive = function (assignments) {
-  console.log('assignments', assignments);
 	if (assignments[0]) {
     for (var i = 0; i < assignments.length; i++) {
       if (assignments[i].active && assignments[i].type == 'driver') {
@@ -270,13 +277,14 @@ AgentService.prototype.checkForChanges = function () {
 
 	return this.$http.post(this.rootUrl + 'checkin/', updateObj, this.configObj).then(function(result){
 		self.timeStamp = result.data.update;
+    self.internetProblem = false;
 		if (result.data.refresh) {
 			self.getAssignments();
       self.getRunnerAssignments();
 		}
 	}, function(err){
     console.log('err at checkForChanges', err);
-    self.resetApp();
+    self.internetProblem = true;
     return self.$q.reject(err);
   });
 };
@@ -309,6 +317,7 @@ AgentService.prototype.stopIntervalCheck = function () {
 	if (angular.isDefined(this.intervalCheck)) {
 		this.$interval.cancel(this.intervalCheck);
 		this.intervalCheck = undefined;
+    this.internetProblem = false;
 	}
 };
 
@@ -329,7 +338,6 @@ AgentService.prototype.assignmentAction = function (assignmentId, action) {
 	}, function(err){
     console.log('err at assignmentAction', err);
     self.$ionicLoading.hide();
-    self.resetApp();
     return self.$q.reject(err);
   });
 };
@@ -347,7 +355,6 @@ AgentService.prototype.taskComplete = function (taskId) {
     return results;
   },function(err){
     console.log('err at taskComplete', err);
-    self.resetApp();
     return self.$q.reject(err);
   });
 };
@@ -379,7 +386,6 @@ AgentService.prototype.acceptRunnerAssignment = function (id) {
   }, function(err) {
     console.log('err at acceptRunnerAssignment', err);
     self.$ionicLoading.hide();
-    self.resetApp();
     return self.$q.reject(err);
   });
 };
@@ -395,7 +401,6 @@ AgentService.prototype.completeRunnerAssignment = function (id) {
   }, function(err) {
     console.log('err at completeRunnerAssignment', err);
     self.$ionicLoading.hide();
-    self.resetApp();
     return self.$q.reject(err);
   });
 };

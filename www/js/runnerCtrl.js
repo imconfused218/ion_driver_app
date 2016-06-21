@@ -1,12 +1,13 @@
 angular.module('runnerCtrl', ['ionic', 'agentService'])
 	.controller('runnerCtrl', RunnerCtrl);
 
-function RunnerCtrl (agentService, $state) {
+function RunnerCtrl (agentService, $state, $ionicPopup) {
 	this.agentService = agentService;
 	this.$state = $state;
+  this.$ionicPopup = $ionicPopup;
 
   if (!this.agentService.activeAssignment) {
-    $state.go('assignmentsList')
+    self.agentService.resetApp();
   } 
   
 }
@@ -20,9 +21,21 @@ RunnerCtrl.prototype.completeAssignment = function (assignment) {
 	var self = this;
 
 	this.agentService.completeRunnerAssignment(assignment.id).then(function(result) {
-    self.agentService.resetApp();
+    self.agentService.selectedAssignment = undefined;
+    self.agentService.selectedOrder = undefined;
+    self.agentService.activeAssignment = undefined;
+    self.$state.go('assignmentsList');
   }, function(err){
-    self.agentService.resetApp();
+    self.makePopup('Error', "Could not complete assignment. Try again", "alert");
   });
 	
+};
+
+RunnerCtrl.prototype.makePopup = function (title, desc, type) {
+  var alertPopup = this.$ionicPopup[type]({
+    title: title || "Error",
+    template: desc || "",
+  });
+
+  return alertPopup;
 };

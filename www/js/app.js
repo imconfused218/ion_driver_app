@@ -93,16 +93,23 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
 
 
 ////////////////////////////////Controller for the assignmentsList views///////////////////////
-function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicListDelegate, $scope) {
+function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicListDelegate, $scope, $ionicPopup, $timeout) {
   this.$ionicListDelegate = $ionicListDelegate;
   this.$ionicSideMenuDelegate = $ionicSideMenuDelegate;
   this.$scope = $scope;
   this.agentService = agentService;
   //this.$ionicHistory = $ionicHistory;
   this.$state = $state;
+  this.$ionicPopup = $ionicPopup;
+  this.$timeout = $timeout;
+  var self = this;
 
   if (this.agentService.activeAssignment){
-    this.$state.go('assignmentsList');
+    this.agentService.getAssignments().then(function(result){
+      return result;
+    }, function(err) {
+      self.makePopup('Connection Error', "Please check your internet connection", "alert")
+    });
   }
 
 
@@ -116,6 +123,7 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicLi
       disableBack: false
     });
   }*/
+
 }
 
 /**
@@ -138,12 +146,23 @@ AssignmentsCtrl.prototype.toggleSideMenu = function () {
 /**Tells server if user is on duty or off */
 //Needs to either try logging in again or get clusters again if cancel
 AssignmentsCtrl.prototype.toggleDuty = function () {
+  var self = this;
   this.agentService.resolveStatuses().then(function(result) {
+    self.toggleSideMenu();
     return result;
   }, function(err) {
-    
+    self.makePopup('On/Off Duty Error', "Sorry something went wrong. Would you like to try again?", "confirm").then(function(result) {
+      if (result) {
+        self.toggleDuty();
+      } else {
+        self.agentService.getStatus().then(function(result) {
+          return result;
+        }, function(err) {
+          self.makePopup("Connection Error", "Can't connect to the server. Please check your internet connection", "alert");
+        });
+      }
+    })
   });
-  this.toggleSideMenu();
 };
 
 /**
@@ -167,18 +186,27 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
   var assignmentId = this.agentService.selectedAssignment.id;
 
   if (this.agentService.selectedAssignment.type == "runner") {
+    console.log('this runner block was called');
     this.agentService.acceptRunnerAssignment(assignmentId).then(function(result) {
-      self.agentService.getAssignments();
+      self.agentService.getRunnerAssignments();
       self.agentService.selectAssignment = undefined;
       self.$ionicListDelegate.closeOptionButtons();
       self.$state.go('activeRunnerAssignment');
+    }, function(err) {
+      self.makePopup("Error", "Unable to accept assignment", "alert")
     });
   } else {
-    this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results){
-      self.agentService.getAssignments();
-      self.agentService.selectedAssignment = undefined;
-      self.$ionicListDelegate.closeOptionButtons();
-      self.$state.go('activeAssignment');
+    console.log('this driver block was called');
+    this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results) {
+      self.agentService.getAssignments().then(function(result) {
+        self.agentService.selectedAssignment = undefined;
+        self.$ionicListDelegate.closeOptionButtons();
+        self.$state.go('activeAssignment');
+      }, function(err) {
+        self.agentService.resetApp()
+      });
+    }, function(err) {
+      self.makePopup("Error", "Unable to accept assignment", "alert");
     });
   }
 };
@@ -188,6 +216,15 @@ AssignmentsCtrl.prototype.refreshList = function () {
   this.agentService.getRunnerAssignments();
   this.$scope.$broadcast('scroll.refreshComplete');
   this.$scope.$apply();
+};
+
+AssignmentsCtrl.prototype.makePopup = function (title, desc, type) {
+  var alertPopup = this.$ionicPopup[type]({
+    title: title || "Error",
+    template: desc || "",
+  });
+
+  return alertPopup;
 };
 
 
@@ -226,13 +263,13 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
     }
   });
 
-
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj'] && $window.localStorage['device_token']) {
     this.agentService.configObj = JSON.parse($window.localStorage.getItem('configObj'));
     this.agentService.getInitialInformation().then(function(results) {
       self.$state.go('assignmentsList');
     }, function(err) {
+      err = err || "";
       $window.localStorage.clear();
       self.showAlert('Sorry something went wrong. Please try logging in again', err.statusText);
     });
@@ -242,8 +279,6 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
     email : '',
     password: ''
   };
-
-
 }
 
 
@@ -259,10 +294,12 @@ LogInCtrl.prototype.logIn = function () {
     self.agentService.getInitialInformation().then(function(results) {
       self.$state.go('assignmentsList');
     }, function(err) {
+      err = err || "";
       console.log('err at getInitialInformation', err);
       self.showAlert('Sorry log in failed. Please try again!', err. statusText);
     });
   }, function(err){
+    err = err || "";
     console.log('err at logIn', err);
     self.showAlert("Sorry log in failed. Please try again!", err.statusText);
   });
