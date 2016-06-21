@@ -136,6 +136,7 @@ AssignmentsCtrl.prototype.toggleSideMenu = function () {
 };
 
 /**Tells server if user is on duty or off */
+//Needs to either try logging in again or get clusters again if cancel
 AssignmentsCtrl.prototype.toggleDuty = function () {
   this.agentService.resolveStatuses().then(function(result) {
     return result;
