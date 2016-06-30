@@ -128,7 +128,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
 
 
 ////////////////////////////////Controller for the assignmentsList views///////////////////////
-function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicListDelegate, $scope, $ionicPopup, $timeout) {
+function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicListDelegate, $scope, $ionicPopup, $timeout, $window) {
   this.$ionicListDelegate = $ionicListDelegate;
   this.$ionicSideMenuDelegate = $ionicSideMenuDelegate;
   this.$scope = $scope;
@@ -137,6 +137,7 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicLi
   this.$state = $state;
   this.$ionicPopup = $ionicPopup;
   this.$timeout = $timeout;
+  this.$window = $window;
   var self = this;
 
   this.agentService.activeAssignment = undefined;
@@ -254,6 +255,30 @@ AssignmentsCtrl.prototype.makePopup = function (title, desc, type) {
   });
 
   return alertPopup;
+};
+
+AssignmentsCtrl.prototype.logOut = function () {
+  var self = this;
+  for (var i in this.agentService.clusters) {
+    this.agentService.clusters[i].on_duty = false;
+  }
+  this.agentService.resolveStatuses().then(function(result) {
+    self.$window.localStorage.clear();
+    self.agentService.configObj = {
+      headers: {
+        "Authorization": this.auth,
+        "Content-Type": 'text/plain'
+      }
+    };
+    self.toggleSideMenu();
+    self.agentService.stopIntervalCheck();
+    self.$state.go('logIn');
+  }, function(err) {
+    self.makePopup('Connection Error', 'Sorry could not log out!', 'alert');
+  });
+  
+  
+  
 };
 
 

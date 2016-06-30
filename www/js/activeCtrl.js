@@ -66,6 +66,8 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'complete/').then(function(results){
   	self.agentService.getAssignments().then(function(result) {
   		self.agentService.selectedOrder = undefined;
+  		self.allEntriesBeGot = false;
+  		self.assignmentReadyToFinish = false;
   		self.agentService.routeMe();
   	}, function(err) {
   		self.$state.go('assignmentsList');
@@ -109,7 +111,7 @@ ActiveCtrl.prototype.orderBeGot = function () {
 		this.agentService.selectedOrder = undefined;
 		this.$state.go('activeAssignment');
 	} else {
-		self.makePopup("Connection Error", "Please check your internet connection", "alert")
+		this.makePopup("Connection Error", "Please check your internet connection", "alert")
 	}
 };
 

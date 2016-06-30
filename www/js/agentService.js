@@ -5,14 +5,13 @@ angular.module('agentService',['ionic'])
 	.service('agentService', AgentService);
 
 //Service for logging in, getting assignments, updating, etc.
-function AgentService ($http, $q, $state, $interval, $window, $ionicLoading, $cordovaGeolocation) {
+function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   this.$q = $q;
   this.$http = $http;
   this.$state = $state;
   this.$interval = $interval;
   this.$window = $window;
   this.$ionicLoading = $ionicLoading;
-  this.$cordovaGeolocation = $cordovaGeolocation
   this.hostUrl = 'https://sandbox.menu.me/';
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
@@ -124,6 +123,7 @@ AgentService.prototype.logIn = function (logInInfo) {
     self.configObj.headers['Bearer'] = results.data.auth_token;
     self.$window.localStorage['configObj'] = JSON.stringify(self.configObj);
     self.$ionicLoading.hide();
+    this.internetProblem = false;
     return results;
   },function(err){
     console.log('err at logInService', err);
@@ -145,6 +145,7 @@ AgentService.prototype.getInitialInformation = function () {
   promisesArray.push(this.getStatus());
 
   return this.$q.all(promisesArray).then(function(result){
+    this.internetProblem = false;
     return result;
   }, function(err){
     return self.$q.reject(err);
@@ -159,7 +160,9 @@ AgentService.prototype.getAssignments = function () {
   var self = this;
 
   return this.$http.get(this.rootUrl + 'tasks/', this.configObj).then(function(results) {
+    console.log('assignments', results);
     self.assignments = results.data.assignments;
+    this.internetProblem = false;
     return results;
   }, function(err) {
     console.log('err at assignmentsService', err);
@@ -202,6 +205,8 @@ AgentService.prototype.resolveStatuses = function () {
 
   return this.$q.all(statusArray).then(function(results){
     if (self.checkForOnDuty()) {
+      self.getRunnerAssignments();
+      self.getAssignments();
       self.startIntervalCheck();
       return results;
     } else {
@@ -274,12 +279,14 @@ AgentService.prototype.getLocation = function () {
   var self = this;
   var geoOptions = {
     timeout: 5000,
-    enableHighAccuracy: false
+    enableHighAccuracy: true
   }
-
-  this.$cordovaGeolocation.getCurrentPosition(geoOptions).then(function(position){
-    this.currentLocation = position;
-  });
+ 
+  navigator.geolocation.getCurrentPosition(function(position) {
+    self.currentLocation = position;
+  }, function(error) {
+    console.log('error getting geolocation')
+  }, geoOptions);
 };
 
 /**
@@ -295,10 +302,12 @@ AgentService.prototype.checkForChanges = function () {
 	};
 
   updateObj.device_token = this.$window.localStorage.getItem("ionic_io_push_token") ? JSON.parse(this.$window.localStorage.getItem("ionic_io_push_token")).token : "";
-
   if (this.currentLocation) {
     updateObj['lat'] = this.currentLocation.coords.latitude;
     updateObj['lng'] = this.currentLocation.coords.longitude;
+    updateObj['accuracy'] = this.currentLocation.coords.accuracy;
+    updateObj['speed'] = this.currentLocation.coords.speed;
+    updateObj['heading'] = this.currentLocation.coords.heading;
   }
 
 	return this.$http.post(this.rootUrl + 'checkin/', updateObj, this.configObj).then(function(result){
@@ -367,6 +376,7 @@ AgentService.prototype.assignmentAction = function (assignmentId, action) {
   this.$ionicLoading.show(this.ionicLoadingConfig);
 	return this.$http.post(this.rootUrl + 'assignments/' + action + assignmentId + '/', emptyObj, this.configObj).then(function(results){
 		self.$ionicLoading.hide();
+    this.internetProblem = false;
 		return results;
 	}, function(err){
     console.log('err at assignmentAction', err);
@@ -400,6 +410,7 @@ AgentService.prototype.getRunnerAssignments = function () {
   var self = this;
   return this.$http.get(this.rootUrl + 'runner_assignments/', this.configObj).then(function(results){
     self.runnerAssignments = results.data.runner_assignments;
+    this.internetProblem = false;
     return results;
   }, function(err){
     console.log('err at assignmentsService', err);
@@ -414,6 +425,7 @@ AgentService.prototype.acceptRunnerAssignment = function (id) {
   this.$ionicLoading.show(this.ionicLoadingConfig);
   return this.$http.post(this.rootUrl + 'runner_assignments/accept/' + id + '/',emptyObj, this.configObj).then(function(results) {
     self.$ionicLoading.hide();
+    this.internetProblem = false;
     return results;
   }, function(err) {
     console.log('err at acceptRunnerAssignment', err);
@@ -429,6 +441,7 @@ AgentService.prototype.completeRunnerAssignment = function (id) {
   this.$ionicLoading.show(this.ionicLoadingConfig);
   return this.$http.post(this.rootUrl + 'runner_assignments/complete/' + id + '/',emptyObj, this.configObj).then(function(results) {
     self.$ionicLoading.hide();
+    this.internetProblem = false;
     return results;
   }, function(err) {
     console.log('err at completeRunnerAssignment', err);
