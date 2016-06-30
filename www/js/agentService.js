@@ -5,13 +5,14 @@ angular.module('agentService',['ionic'])
 	.service('agentService', AgentService);
 
 //Service for logging in, getting assignments, updating, etc.
-function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
+function AgentService ($http, $q, $state, $interval, $window, $ionicLoading, $cordovaGeolocation) {
   this.$q = $q;
   this.$http = $http;
   this.$state = $state;
   this.$interval = $interval;
   this.$window = $window;
   this.$ionicLoading = $ionicLoading;
+  this.$cordovaGeolocation = $cordovaGeolocation
   this.hostUrl = 'https://sandbox.menu.me/';
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
@@ -271,9 +272,14 @@ AgentService.prototype.checkForOnDuty = function () {
 */
 AgentService.prototype.getLocation = function () {
   var self = this;
-  navigator.geolocation.getCurrentPosition(function(position){
-    self.currentLocation = position;
-  })
+  var geoOptions = {
+    timeout: 5000,
+    enableHighAccuracy: false
+  }
+
+  this.$cordovaGeolocation.getCurrentPosition(geoOptions).then(function(position){
+    this.currentLocation = position;
+  });
 };
 
 /**

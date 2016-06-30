@@ -24,7 +24,9 @@
       }
     },
     "cordova-plugin-transport-security",
-    "ionic-plugin-deploy"
+    "ionic-plugin-deploy",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-compat"
   ],
   "cordovaPlatforms": [
     "android",
