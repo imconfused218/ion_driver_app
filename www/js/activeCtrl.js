@@ -13,10 +13,6 @@ function ActiveCtrl (agentService, $state, $ionicHistory, $ionicPopup, $q) {
 	this.allEntriesChecked();
 	this.assignmentReadyToFinish = false;
 
-	if(!this.agentService.activeAssignment){
-		$state.go('assignmentsList')
-	}
-
 	/*if (!this.agentService.selectedOrder){
 		console.log('called');
 		this.$ionicHistory.nextViewOptions({
@@ -68,17 +64,11 @@ ActiveCtrl.prototype.completeAssignment = function () {
 	var self = this;
 	var emptyObj = {};
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'complete/').then(function(results){
-		self.assignmentReadyToFinish = false;
-		self.allEntriesBeGot = false;
-		self.agentService.selectedAssignment = undefined;
-  	self.agentService.selectedOrder = undefined;
-  	self.agentService.activeAssignment = undefined;
-  	self.agentService.orderGottenIds = [];
-  	self.agentService.allTasksComplete = false;
   	self.agentService.getAssignments().then(function(result) {
-  		self.$state.go("assignmentsList");
+  		self.agentService.selectedOrder = undefined;
+  		self.agentService.routeMe();
   	}, function(err) {
-  		self.agentService.resetApp();
+  		self.$state.go('assignmentsList');
   	})
 	}, function(err) {
 		self.makePopup("Error", "Unable to complete assignment", "alert")
@@ -113,11 +103,14 @@ ActiveCtrl.prototype.orderSelected = function () {
  * When a user gets an order it marks it as picked up and checks to see if that's all the orders
  */
 ActiveCtrl.prototype.orderBeGot = function () {
-	this.agentService.orderGottenIds.push(this.agentService.selectedOrder.id)
-	//this.agentService.selectedOrder['isGot'] = true;
-	this.checkAllTasksComplete();
-	this.agentService.selectedOrder = undefined;
-	this.$state.go('activeAssignment');
+	if (!this.agentService.internetProblem) {
+		this.agentService.orderGottenIds.push(this.agentService.selectedOrder.id)
+		this.checkAllTasksComplete();
+		this.agentService.selectedOrder = undefined;
+		this.$state.go('activeAssignment');
+	} else {
+		self.makePopup("Connection Error", "Please check your internet connection", "alert")
+	}
 };
 
 /**
@@ -170,7 +163,6 @@ ActiveCtrl.prototype.entryToggleCheck = function (entry) {
 */
 ActiveCtrl.prototype.allEntriesChecked = function () {
 	if(!(angular.isDefined(this.agentService.selectedOrder))){
-		this.agentService.resetApp();
 		return;
 	}
 	for(var i in this.agentService.selectedOrder.entries) {

@@ -5,10 +5,6 @@ function RunnerCtrl (agentService, $state, $ionicPopup) {
 	this.agentService = agentService;
 	this.$state = $state;
   this.$ionicPopup = $ionicPopup;
-
-  if (!this.agentService.activeAssignment) {
-    self.agentService.resetApp();
-  } 
   
 }
 
@@ -21,9 +17,7 @@ RunnerCtrl.prototype.completeAssignment = function (assignment) {
 	var self = this;
 
 	this.agentService.completeRunnerAssignment(assignment.id).then(function(result) {
-    self.agentService.selectedAssignment = undefined;
     self.agentService.selectedOrder = undefined;
-    self.agentService.activeAssignment = undefined;
     self.$state.go('assignmentsList');
   }, function(err){
     self.makePopup('Error', "Could not complete assignment. Try again", "alert");

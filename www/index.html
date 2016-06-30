@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 
-    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src &apos;self&apos; &apos;unsafe-inline&apos;; script-src &apos;self&apos; &apos;unsafe-inline&apos; &apos;unsafe-eval&apos;">
+   <meta http-equiv="Content-Security-Policy" content="default-src *; style-src &apos;self&apos; &apos;unsafe-inline&apos;; script-src * &apos;unsafe-inline&apos; &apos;unsafe-eval&apos; ">
 
     <title>Driver App</title>
     
@@ -19,7 +19,7 @@
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
-<script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
+  <script src="lib/ionic-platform-web-client/dist/ionic.io.bundle.min.js"></script>
     
     
 
@@ -204,7 +204,7 @@
         <ion-header-bar class='bar-stable'>
         </ion-header-bar>
         <ion-content>
-        <div class='internetProblem' ng-show='assignmentsCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
+        <div class='internetProblem' ng-show='activeCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
           <ion-list>
             <ion-item class='currentAssignmentSubheader'>
               <div class='currentDropOffTime'>{{activeCtrl.agentService.activeAssignment.dropoff}} DROPOFF</div>
@@ -249,7 +249,7 @@
     <script id="selectedOrder.html" type="text/ng-template">
       <ion-view view-title='Order Details'>
         <ion-content>
-        <div class='internetProblem' ng-show='assignmentsCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
+        <div class='internetProblem' ng-show='activeCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
           <div class='orderInfoRow'>
             <div class='orderInfoContainer'>
               <div class='order-name'>Order for {{activeCtrl.agentService.selectedOrder.name}}</div>
@@ -288,7 +288,7 @@
         <ion-header-bar class='bar-stable'>
         </ion-header-bar>
         <ion-content>
-        <div class='internetProblem' ng-show='assignmentsCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
+        <div class='internetProblem' ng-show='runnerCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
           <ion-list>
             <ion-item class='currentAssignmentSubheader'>
               <div>
@@ -319,7 +319,7 @@
     <script id="selectedRunnerOrder.html" type="text/ng-template">
       <ion-view view-title='Order Details'>
         <ion-content>
-        <div class='internetProblem' ng-show='assignmentsCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
+        <div class='internetProblem' ng-show='runnerCtrl.agentService.internetProblem'>Connection Error. Trying to reconnect...</div>
           <div class='orderInfoRow'>
             <div class='orderInfoContainer'>
               <div class='order-name'>Order for {{runnerCtrl.agentService.selectedOrder.name}}</div>

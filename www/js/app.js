@@ -7,6 +7,41 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
     var self = this;
     this.$window = $window;
 
+
+    var deploy = new Ionic.Deploy();
+
+    deploy.setChannel('dev');
+
+    deploy.check().then(function(isDeployAvailable) {
+      // isDeployAvailable will be true if there is an update
+      // and false otherwise
+      if (isDeployAvailable) {
+        self.$ioncLoading.show({
+          template: 'Updating..'
+        })
+      }
+    }, function(deployCheckError) {
+      // unable to check for deploy updates
+      self.$ionicLoading.hide();
+    });
+
+    deploy.update().then(function(deployResult) {
+      // deployResult will be true when successfull and
+      // false otherwise
+      self.$ionicLoading.hide();
+      console.log('deployResult', deployResult);
+    }, function(deployUpdateError) {
+      console.log('deployUpDateError', deployUpDateError);
+      // fired if we're unable to check for updates or if any 
+      // errors have occured.
+      self.$ionicLoading.hide();
+    }, function(deployProgress) {
+      // this is a progress callback, so it will be called a lot
+      // deployProgress will be an Integer representing the current
+      // completion percentage.
+      self.$ionicLoading.hide();
+    });
+
     var push = new Ionic.Push({
       "debug": true
     });
@@ -104,14 +139,9 @@ function AssignmentsCtrl (agentService, $ionicSideMenuDelegate, $state, $ionicLi
   this.$timeout = $timeout;
   var self = this;
 
-  if (this.agentService.activeAssignment){
-    this.agentService.getAssignments().then(function(result){
-      return result;
-    }, function(err) {
-      self.makePopup('Connection Error', "Please check your internet connection", "alert")
-    });
-  }
-
+  this.agentService.activeAssignment = undefined;
+  this.agentService.orderGottenIds = [];
+  this.agentService.allTasksComplete = false;
 
   /*if(!this.agentService.selectedAssignment){
     console.log('this happened');
@@ -186,24 +216,23 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
   var assignmentId = this.agentService.selectedAssignment.id;
 
   if (this.agentService.selectedAssignment.type == "runner") {
-    console.log('this runner block was called');
     this.agentService.acceptRunnerAssignment(assignmentId).then(function(result) {
-      self.agentService.getRunnerAssignments();
+      self.agentService.getRunnerAssignments().then(function(result) {
+        self.agentService.routeMe();
+      });
       self.agentService.selectAssignment = undefined;
       self.$ionicListDelegate.closeOptionButtons();
-      self.$state.go('activeRunnerAssignment');
     }, function(err) {
       self.makePopup("Error", "Unable to accept assignment", "alert")
     });
   } else {
-    console.log('this driver block was called');
     this.agentService.assignmentAction(assignmentId, 'accept/').then(function(results) {
       self.agentService.getAssignments().then(function(result) {
+        self.agentService.routeMe();
         self.agentService.selectedAssignment = undefined;
         self.$ionicListDelegate.closeOptionButtons();
-        self.$state.go('activeAssignment');
       }, function(err) {
-        self.agentService.resetApp()
+        self.makePopup("Error", "Possible Connection problems", "alert");
       });
     }, function(err) {
       self.makePopup("Error", "Unable to accept assignment", "alert");
@@ -239,35 +268,12 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
   this.$ionicPopup = $ionicPopup;
   var self = this;
 
-  this.deploy = new Ionic.Deploy();
-
-  //Sets channel for testing or production
-  this.deploy.setChannel('dev');
-
-  this.deploy.check().then(function(hasUpdate) {
-    if (hasUpdate) {
-      self.$ionicLoading.show({
-        template: "Updating.."
-      });
-      self.deploy.update().then(function(deployResult) {
-        self.$ionicLoading.hide();
-      }, function(deployUpdateError) {
-        self.$ionicLoading.hide();
-        // fired if we're unable to check for updates or if any 
-        // errors have occured.
-      }, function(deployProgress) {
-        // this is a progress callback, so it will be called a lot
-        // deployProgress will be an Integer representing the current
-        // completion percentage.
-      });
-    }
-  });
 
   //Checks to see if the user has already been authenticated in the past
   if ($window.localStorage['configObj'] && $window.localStorage['device_token']) {
     this.agentService.configObj = JSON.parse($window.localStorage.getItem('configObj'));
     this.agentService.getInitialInformation().then(function(results) {
-      self.$state.go('assignmentsList');
+      self.agentService.routeMe();
     }, function(err) {
       err = err || "";
       $window.localStorage.clear();
@@ -292,7 +298,7 @@ LogInCtrl.prototype.logIn = function () {
 
   this.agentService.logIn(this.logInField).then(function(results) {
     self.agentService.getInitialInformation().then(function(results) {
-      self.$state.go('assignmentsList');
+      self.agentService.routeMe();
     }, function(err) {
       err = err || "";
       console.log('err at getInitialInformation', err);

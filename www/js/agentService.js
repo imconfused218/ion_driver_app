@@ -15,41 +15,31 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
   this.hostUrl = 'https://sandbox.menu.me/';
   this.rootUrl = this.hostUrl + 'foodcannon/non-fleet/agent/';
   
-  this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
-
+  //Assignments List $state variables
   this.runnerAssignments = [];
-
   this.onduty = false;
-
   this.clusters = [];
-
   this.assignments = [];
-
   this.selectedAssignment;
-
   this.selectedOrder;
 
+  //active $state variables
   this.activeAssignment;
-
   this.orderGottenIds = [];
-
   this.allTasksComplete = false;
 
+  //Agent Service variables
   this.intervalCheck;
-
   this.timeStamp = '';
-
   this.internetProblem = false;
-
-
+  this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
+  this.currentLocation;
   this.configObj = {
     headers: {
       "Authorization": this.auth,
-      "Content-Type": 'text/plain'}
+      "Content-Type": 'text/plain'
+    }
   };
-
-  this.currentLocation;
-
 
   //Config object for the loading screen
   this.ionicLoadingConfig = {
@@ -62,10 +52,41 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
 
 }
 
+
+AgentService.prototype.routeMe = function () {
+  var completeList = this.assignments.concat(this.runnerAssignments);
+
+  for (var i = 0; i < completeList.length; i++) {
+    if (completeList[i].active && completeList[i].type == 'driver') {
+      if (this.$state.current.name == 'selectedOrder') {
+        return;
+      } else {
+        this.activeAssignment = completeList[i];
+        this.$state.go('activeAssignment');
+        return;
+      }
+    } else if (completeList[i].active && completeList[i].type == 'runner'){
+      if (this.$state.current.name == 'selectedRunnerOrder') {
+        return;
+      } else {
+        this.activeAssignment = completeList[i];
+        this.$state.go('activeRunnerAssignment');
+        return;
+      }
+    }
+  }
+
+  if (this.$state.current.name == 'selectedAssignment' || this.$state.current.name == 'selectedRunnerAssignment') {
+    return;
+  } else {
+    this.$state.go('assignmentsList');
+  }
+};
+
 /**
  * If an error or something goes wrong reset the app
  */
-AgentService.prototype.resetApp = function () {
+/*AgentService.prototype.resetApp = function () {
   var self = this;
 
   this.stopIntervalCheck();
@@ -86,7 +107,7 @@ AgentService.prototype.resetApp = function () {
     return self.$q.reject(err);
   });
 };
-
+*/
 /**
  * Passes user email and password to server
  * @param{object} logInInfo - An object wih user log-in information
@@ -137,9 +158,7 @@ AgentService.prototype.getAssignments = function () {
   var self = this;
 
   return this.$http.get(this.rootUrl + 'tasks/', this.configObj).then(function(results) {
-    console.log('getDriverAssignments', results);
     self.assignments = results.data.assignments;
-    self.checkForActive(self.assignments);
     return results;
   }, function(err) {
     console.log('err at assignmentsService', err);
@@ -219,6 +238,7 @@ AgentService.prototype.postStatus = function (cluster) {
 * Checks to see if user currently has an active assignment
 * @params{Array} - assignments
 */
+/*
 AgentService.prototype.checkForActive = function (assignments) {
 	if (assignments[0]) {
     for (var i = 0; i < assignments.length; i++) {
@@ -232,14 +252,14 @@ AgentService.prototype.checkForActive = function (assignments) {
     }
 	}
 };
-
+*/
 /**
  * Checks to see if the agent is currently on duty
  * @returns {Boolean}
  */
 AgentService.prototype.checkForOnDuty = function () {
 	for (var i in this.clusters) {
-		if (this.clusters[i].on_duty) {
+		if (this.clusters[i] && this.clusters[i].on_duty) {
 			return true;
 		}
 	}
@@ -278,11 +298,7 @@ AgentService.prototype.checkForChanges = function () {
 	return this.$http.post(this.rootUrl + 'checkin/', updateObj, this.configObj).then(function(result){
 		self.timeStamp = result.data.update;
     self.internetProblem = false;
-		if (result.data.refresh) {
-			self.getAssignments();
-      self.getRunnerAssignments();
-		}
-	}, function(err){
+	}, function(err) {
     console.log('err at checkForChanges', err);
     self.internetProblem = true;
     return self.$q.reject(err);
@@ -294,6 +310,7 @@ AgentService.prototype.checkForChanges = function () {
  */
 AgentService.prototype.startIntervalCheck = function () {
 	var self = this;
+  var promiseArray = [];
 
   this.onDuty = true;
 
@@ -302,8 +319,18 @@ AgentService.prototype.startIntervalCheck = function () {
 	}
 
 	this.intervalCheck = this.$interval(function(){
+
     self.getLocation();
-		self.checkForChanges();
+
+    promiseArray = [];
+    promiseArray.push(self.getAssignments());
+    promiseArray.push(self.getRunnerAssignments());
+    promiseArray.push(self.checkForChanges());
+    
+    self.$q.all(promiseArray).then(function(result) {
+      self.routeMe();
+    })
+
 	}, 15000);
 };
 
@@ -367,7 +394,6 @@ AgentService.prototype.getRunnerAssignments = function () {
   var self = this;
   return this.$http.get(this.rootUrl + 'runner_assignments/', this.configObj).then(function(results){
     self.runnerAssignments = results.data.runner_assignments;
-    self.checkForActive(self.runnerAssignments);
     return results;
   }, function(err){
     console.log('err at assignmentsService', err);
