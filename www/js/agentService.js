@@ -160,7 +160,6 @@ AgentService.prototype.getAssignments = function () {
   var self = this;
 
   return this.$http.get(this.rootUrl + 'tasks/', this.configObj).then(function(results) {
-    console.log('assignments', results);
     self.assignments = results.data.assignments;
     this.internetProblem = false;
     return results;
