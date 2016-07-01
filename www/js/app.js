@@ -17,7 +17,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
       // isDeployAvailable will be true if there is an update
       // and false otherwise
       if (isDeployAvailable) {
-        self.$ioncLoading.show({
+        self.$ionicLoading.show({
           template: 'Updating..'
         })
       }
@@ -40,7 +40,6 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
       // this is a progress callback, so it will be called a lot
       // deployProgress will be an Integer representing the current
       // completion percentage.
-      self.$ionicLoading.hide();
     });
 
     var push = new Ionic.Push({

@@ -281,7 +281,6 @@ AgentService.prototype.checkForOnDuty = function () {
 */
 AgentService.prototype.getLocation = function () {
   var self = this;
-  console.log('getLocation');
   var geoOptions = {
     timeout: 5000,
     enableHighAccuracy: false
