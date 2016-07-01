@@ -285,7 +285,7 @@ AgentService.prototype.getLocation = function () {
   navigator.geolocation.getCurrentPosition(function(position) {
     self.currentLocation = position;
   }, function(error) {
-    console.log('error getting geolocation')
+    console.log('error getting geolocation', error);
   }, geoOptions);
 };
 

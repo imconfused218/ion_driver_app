@@ -68,6 +68,9 @@ ActiveCtrl.prototype.completeAssignment = function () {
   		self.agentService.selectedOrder = undefined;
   		self.allEntriesBeGot = false;
   		self.assignmentReadyToFinish = false;
+  		self.agentService.activeAssignment = undefined;
+  		self.agentService.orderGottenIds = [];
+  		self.agentService.allTasksComplete = false;
   		self.agentService.routeMe();
   	}, function(err) {
   		self.$state.go('assignmentsList');

@@ -47,7 +47,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
     });
 
     push.register(function(token){
-      console.log('Device token', token.token);
+      console.log('push token', token.token);
       self.$window.localStorage['device_token'] = JSON.stringify(token.token);
       push.saveToken(token);
     });

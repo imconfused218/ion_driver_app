@@ -18,6 +18,9 @@ RunnerCtrl.prototype.completeAssignment = function (assignment) {
 
 	this.agentService.completeRunnerAssignment(assignment.id).then(function(result) {
     self.agentService.selectedOrder = undefined;
+    self.agentService.activeAssignment = undefined;
+    self.agentService.orderGottenIds = [];
+    self.agentService.allTasksComplete = false;
     self.$state.go('assignmentsList');
   }, function(err){
     self.makePopup('Error', "Could not complete assignment. Try again", "alert");
