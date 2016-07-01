@@ -2,10 +2,11 @@
 //Main module that everything is based off of
 angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentService', 'runnerCtrl'])
 
-.run(function($ionicPlatform, $ionicHistory, $window) {
+.run(function($ionicPlatform, $ionicHistory, $window, $ionicLoading) {
   $ionicPlatform.ready(function() {
     var self = this;
     this.$window = $window;
+    this.$ionicLoading = $ionicLoading;
 
 
     var deploy = new Ionic.Deploy();
