@@ -10,12 +10,13 @@ function RunnerCtrl (agentService, $state, $ionicPopup) {
 
 RunnerCtrl.prototype.selectOrder = function (order) {
   this.agentService.selectedOrder = order;
+  this.agentService.getLocation();
   this.$state.go('selectedRunnerOrder');
 };
 
 RunnerCtrl.prototype.completeAssignment = function (assignment) {
 	var self = this;
-
+  this.agentService.getLocation();
 	this.agentService.completeRunnerAssignment(assignment.id).then(function(result) {
     self.agentService.getInitialInformation().then(function(result) {
       self.agentService.selectedOrder = undefined;

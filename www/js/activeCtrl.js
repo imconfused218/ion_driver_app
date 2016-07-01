@@ -50,6 +50,7 @@ ActiveCtrl.prototype.taskComplete = function (taskId) {
 ActiveCtrl.prototype.arriveAssignment = function () {
 	var emptyObj = {};
 	var self = this;
+	this.agentService.getLocation();
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'arrive/').then(function(results){
 		self.assignmentReadyToFinish = true;
 	}, function(err) {
@@ -63,6 +64,7 @@ ActiveCtrl.prototype.arriveAssignment = function () {
 ActiveCtrl.prototype.completeAssignment = function () {
 	var self = this;
 	var emptyObj = {};
+	this.agentService.getLocation();
 	this.agentService.assignmentAction(this.agentService.activeAssignment.id, 'complete/').then(function(results){
   	self.agentService.getAssignments().then(function(result) {
   		self.agentService.selectedOrder = undefined;
@@ -108,6 +110,7 @@ ActiveCtrl.prototype.orderSelected = function () {
  * When a user gets an order it marks it as picked up and checks to see if that's all the orders
  */
 ActiveCtrl.prototype.orderBeGot = function () {
+	this.agentService.getLocation();
 	if (!this.agentService.internetProblem) {
 		this.agentService.orderGottenIds.push(this.agentService.selectedOrder.id)
 		this.checkAllTasksComplete();

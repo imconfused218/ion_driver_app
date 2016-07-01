@@ -30,6 +30,7 @@ function AgentService ($http, $q, $state, $interval, $window, $ionicLoading) {
 
   //Agent Service variables
   this.intervalCheck;
+  this.geoInterval;
   this.timeStamp = '';
   this.internetProblem = false;
   this.auth = "Token BC04DM5Q-Qjlzk9SrtoZRCcRvbYYsomuVUuqzO8yHi3vl9jS7sKhBd3bRTl7ELhKwmrfpXeqXQQZC";
@@ -181,8 +182,10 @@ AgentService.prototype.getStatus = function () {
     self.clusters = results.data.groups;
     if (self.checkForOnDuty()) {
       self.startIntervalCheck();
+      self.startGeoInterval();
     } else {
       self.stopIntervalCheck();
+      self.stopGeoInterval();
     }
     return results;
   }, function(err) {
@@ -207,9 +210,11 @@ AgentService.prototype.resolveStatuses = function () {
       self.getRunnerAssignments();
       self.getAssignments();
       self.startIntervalCheck();
+      self.startGeoInterval();
       return results;
     } else {
       self.stopIntervalCheck();
+      self.stopGeoInterval();
       self.assignments = [];
       self.runnerAssignments = [];
       return results;
@@ -276,9 +281,10 @@ AgentService.prototype.checkForOnDuty = function () {
 */
 AgentService.prototype.getLocation = function () {
   var self = this;
+  console.log('getLocation');
   var geoOptions = {
     timeout: 5000,
-    enableHighAccuracy: true
+    enableHighAccuracy: false
   }
  
   navigator.geolocation.getCurrentPosition(function(position) {
@@ -319,6 +325,33 @@ AgentService.prototype.checkForChanges = function () {
   });
 };
 
+
+/*
+ * Calls GeoLocation every 5 seconds when user is on-duty
+ */
+AgentService.prototype.startGeoInterval = function () {
+  var self = this;
+
+  if(angular.isDefined(this.geoInterval)){
+    return;
+  }
+
+  this.geoInterval = this.$interval(function() {
+    self.getLocation();
+  }, 5000)
+};
+
+/** 
+* Stops calling checkForChanges when user goes off-duty
+*/
+AgentService.prototype.stopGeoInterval = function () {
+
+  if (angular.isDefined(this.geoInterval)) {
+    this.$interval.cancel(this.geoInterval);
+    this.geoInterval = undefined;
+  }
+};
+
 /**
  * Calls checkForChanges() every 15 seconds when user is on-duty
  */
@@ -332,9 +365,7 @@ AgentService.prototype.startIntervalCheck = function () {
 		return;
 	}
 
-	this.intervalCheck = this.$interval(function(){
-
-    self.getLocation();
+	this.intervalCheck = this.$interval(function() {
 
     promiseArray = [];
     promiseArray.push(self.getAssignments());

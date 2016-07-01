@@ -217,6 +217,7 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
   var self = this;
   var assignmentId = this.agentService.selectedAssignment.id;
 
+  this.agentService.getLocation();
   if (this.agentService.selectedAssignment.type == "runner") {
     this.agentService.acceptRunnerAssignment(assignmentId).then(function(result) {
       self.agentService.getRunnerAssignments().then(function(result) {
@@ -245,6 +246,7 @@ AssignmentsCtrl.prototype.acceptAssignment = function () {
 AssignmentsCtrl.prototype.refreshList = function () {
   this.agentService.getAssignments();
   this.agentService.getRunnerAssignments();
+  this.agentService.getLocation();
   this.$scope.$broadcast('scroll.refreshComplete');
   this.$scope.$apply();
 };
@@ -260,6 +262,7 @@ AssignmentsCtrl.prototype.makePopup = function (title, desc, type) {
 
 AssignmentsCtrl.prototype.logOut = function () {
   var self = this;
+  this.agentService.getLocation();
   for (var i in this.agentService.clusters) {
     this.agentService.clusters[i].on_duty = false;
   }
@@ -296,7 +299,7 @@ function LogInCtrl (agentService, $window, $state, $ionicLoading, $ionicPlatform
 
 
   //Checks to see if the user has already been authenticated in the past
-  if ($window.localStorage['configObj'] && $window.localStorage['device_token']) {
+  if ($window.localStorage['configObj']) {
     this.agentService.configObj = JSON.parse($window.localStorage.getItem('configObj'));
     this.agentService.getInitialInformation().then(function(results) {
       self.agentService.routeMe();
@@ -324,6 +327,7 @@ LogInCtrl.prototype.logIn = function () {
 
   this.agentService.logIn(this.logInField).then(function(results) {
     self.agentService.getInitialInformation().then(function(results) {
+      self.agentService.getLocation();
       self.agentService.routeMe();
     }, function(err) {
       err = err || "";
