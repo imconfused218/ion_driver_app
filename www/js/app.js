@@ -11,7 +11,7 @@ angular.module('starter', ['ionic','ionic.service.core', 'activeCtrl', 'agentSer
 
     var deploy = new Ionic.Deploy();
 
-    deploy.setChannel('dev');
+    /*deploy.setChannel('dev');*/
 
     deploy.check().then(function(isDeployAvailable) {
       // isDeployAvailable will be true if there is an update
